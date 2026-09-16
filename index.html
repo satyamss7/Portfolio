@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satyam Saha | Automotive Software Portfolio</title>
+    <title>Satyam Saha | Automotive Software Engineer</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #020610;
@@ -13,8 +13,9 @@
             --text-main: #ffffff;
             --text-dim: #94a3b8;
             --accent: #00f0ff;
-            --accent-dim: rgba(0, 240, 255, 0.2);
-            --gradient: linear-gradient(135deg, #00f0ff, #0055ff);
+            --accent-glow: rgba(0, 240, 255, 0.4);
+            --alert-red: #ff0055;
+            --gradient: linear-gradient(135deg, #00f0ff, #0066ff);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; scrollbar-width: none; }
@@ -27,65 +28,142 @@
             overflow: hidden; 
         }
 
-        /* --- 3D ADAS DRIVING GRID (Autonomous Mapping) --- */
-        .adas-grid-container {
-            position: fixed; bottom: 0; left: 0; width: 100vw; height: 60vh;
-            perspective: 800px; z-index: -3; overflow: hidden;
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
-        }
-        .adas-grid {
-            position: absolute; bottom: -50%; left: -50%; width: 200%; height: 200%;
-            background-image: 
-                linear-gradient(rgba(0, 240, 255, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.3) 1px, transparent 1px);
-            background-size: 80px 80px;
-            transform: rotateX(75deg);
-            animation: drive 1.5s linear infinite;
-        }
-        @keyframes drive {
-            0% { transform: rotateX(75deg) translateY(0); }
-            100% { transform: rotateX(75deg) translateY(80px); }
+        /* =========================================
+           0. HEXAGONAL GRILLE BACKGROUND
+           ========================================= */
+        .hex-grille {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: radial-gradient(rgba(0, 240, 255, 0.05) 2px, transparent 2px);
+            background-size: 40px 40px; z-index: -5; pointer-events: none;
         }
 
-        /* --- LiDAR / RADAR SCANNER --- */
+        /* =========================================
+           1. AUTOMOTIVE EV DASHBOARD GAUGES
+           ========================================= */
+        .dashboard-gauges {
+            position: fixed; top: 40%; left: 10%; transform: translateY(-50%);
+            width: 400px; height: 400px; z-index: -4; pointer-events: none;
+            opacity: 0.15; 
+        }
+        .gauge-circle {
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 4px solid rgba(0, 240, 255, 0.2);
+            border-left: 4px dashed var(--accent);
+            border-bottom: 4px dashed var(--accent);
+            position: relative;
+        }
+        .gauge-circle::before {
+            content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border-radius: 50%; border: 10px solid transparent;
+            border-top-color: var(--alert-red); transform: rotate(45deg);
+        }
+        .needle {
+            position: absolute; top: 50%; left: 50%; width: 4px; height: 45%;
+            background: var(--alert-red); transform-origin: bottom center;
+            box-shadow: 0 0 15px var(--alert-red);
+            animation: rev-engine 4s ease-in-out infinite alternate;
+        }
+        @keyframes rev-engine {
+            0% { transform: translate(-50%, -100%) rotate(-100deg); }
+            30% { transform: translate(-50%, -100%) rotate(-40deg); }
+            50% { transform: translate(-50%, -100%) rotate(-60deg); }
+            100% { transform: translate(-50%, -100%) rotate(80deg); }
+        }
+
+        /* =========================================
+           2. 3D AUTONOMOUS DRIVING ROAD (ADAS)
+           ========================================= */
+        .road-grid-container {
+            position: fixed; bottom: 0; left: 0; width: 100vw; height: 50vh;
+            perspective: 800px; z-index: -3; overflow: hidden;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+        }
+        .road-grid {
+            position: absolute; bottom: -50%; left: -50%; width: 200%; height: 200%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.6) 2px, transparent 2px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.6) 2px, transparent 2px);
+            background-size: 80px 80px;
+            transform: rotateX(75deg);
+            animation: drive 0.8s linear infinite;
+        }
+        @keyframes drive { 0% { transform: rotateX(75deg) translateY(0); } 100% { transform: rotateX(75deg) translateY(80px); } }
+
+        /* =========================================
+           3. LiDAR / RADAR SCANNER
+           ========================================= */
         .radar-scanner {
-            position: fixed; top: -100px; right: -100px;
-            width: 500px; height: 500px; border-radius: 50%;
-            border: 1px solid rgba(0, 240, 255, 0.1);
-            background: radial-gradient(circle, rgba(0,240,255,0.05) 0%, transparent 70%);
-            z-index: -2; pointer-events: none;
+            position: fixed; top: 10%; right: 5%;
+            width: 350px; height: 350px; border-radius: 50%;
+            border: 2px solid rgba(0, 240, 255, 0.1);
+            background: radial-gradient(circle, rgba(0,240,255,0.05) 0%, transparent 60%);
+            z-index: -4; pointer-events: none; opacity: 0.3;
         }
         .radar-scanner::before {
             content: ''; position: absolute; top: 50%; left: 50%;
-            width: 250px; height: 250px;
-            background: conic-gradient(from 0deg at 0 0, transparent 270deg, rgba(0,240,255,0.4) 360deg);
-            transform-origin: 0 0; animation: radar-spin 4s linear infinite;
-            border-right: 2px solid var(--accent);
+            width: 175px; height: 175px;
+            background: conic-gradient(from 0deg at 0 0, transparent 270deg, rgba(0,240,255,0.6) 360deg);
+            transform-origin: 0 0; animation: radar-spin 3s linear infinite;
+            border-right: 3px solid var(--accent); border-radius: 50%;
         }
         @keyframes radar-spin { 100% { transform: rotate(360deg); } }
-        .radar-ring {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            border-radius: 50%; border: 1px dashed rgba(0, 240, 255, 0.2);
+        .blip {
+            position: absolute; width: 8px; height: 8px; background: var(--alert-red);
+            border-radius: 50%; box-shadow: 0 0 15px var(--alert-red); animation: ping 3s infinite;
         }
-        .ring-1 { width: 200px; height: 200px; }
-        .ring-2 { width: 350px; height: 350px; border: 1px solid rgba(0, 240, 255, 0.1); }
+        .blip-1 { top: 30%; left: 40%; animation-delay: 0.5s; }
+        .blip-2 { top: 60%; right: 25%; animation-delay: 1.5s; }
+        @keyframes ping { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.5); } }
 
-        /* --- ECU Nodes (CAN Network) --- */
-        .ecu-node {
-            position: fixed; width: 8px; height: 8px; background: var(--accent);
-            border-radius: 50%; box-shadow: 0 0 15px var(--accent); z-index: -2; opacity: 0.5;
+        /* =========================================
+           4. DYNAMIC CAN-BUS TELEMETRY
+           ========================================= */
+        .telemetry-hud {
+            position: fixed; top: 30px; left: 80px; z-index: 0;
+            font-family: 'Fira Code', monospace; color: var(--accent);
+            font-size: 0.85rem; line-height: 1.8; opacity: 0.6;
+            pointer-events: none; transition: all 0.3s ease;
         }
-        .ecu-node::after {
-            content: attr(data-label); position: absolute; top: 15px; left: -10px;
-            font-family: 'Fira Code', monospace; font-size: 0.7rem; color: var(--accent); opacity: 0.7;
-        }
-        .ecu-1 { top: 25%; left: 15%; animation: pulse 2s infinite; }
-        .ecu-2 { top: 60%; left: 10%; animation: pulse 2s infinite 0.5s; }
-        .ecu-3 { top: 35%; right: 25%; animation: pulse 2s infinite 1.5s; }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.5); } }
+        .telemetry-hud span { color: #fff; transition: color 0.3s ease; }
 
-        /* General UI Styling */
+        /* =========================================
+           5. PHYSICAL CAN-BUS WIRE
+           ========================================= */
+        .can-bus-line {
+            position: fixed; top: 0; left: 40px; width: 2px; height: 100vh;
+            background: rgba(0, 240, 255, 0.2); z-index: 0; pointer-events: none;
+        }
+        .can-bus-packet {
+            position: absolute; left: -2px; width: 6px; height: 60px;
+            background: var(--accent); box-shadow: 0 0 20px var(--accent);
+            border-radius: 4px; animation: transmit 2s linear infinite;
+        }
+        @keyframes transmit {
+            0% { top: -100px; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 100vh; opacity: 0; }
+        }
+
+        /* =========================================
+           6. SLIDE-SPECIFIC WATERMARKS (Aggressive)
+           ========================================= */
+        .slide-watermark {
+            position: absolute; top: 50%; right: -5%; /* Pulled to the right to peek out */
+            transform: translateY(-50%);
+            font-size: 60vh; /* Massive scale */
+            color: rgba(0, 240, 255, 0.08); /* Highly visible now */
+            z-index: 0; pointer-events: none;
+            text-shadow: 0 0 50px rgba(0, 240, 255, 0.15);
+            animation: breathe 6s ease-in-out infinite alternate;
+        }
+        @keyframes breathe {
+            0% { transform: translateY(-50%) scale(1); }
+            100% { transform: translateY(-50%) scale(1.05); }
+        }
+
+        /* --- LAYOUT & SCROLL --- */
         .scroll-container {
             height: 100vh; height: 100dvh; overflow-y: scroll;
             scroll-snap-type: y mandatory; scroll-behavior: smooth;
@@ -93,132 +171,170 @@
         .slide {
             height: 100vh; height: 100dvh; width: 100%; scroll-snap-align: start;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 5%; position: relative;
+            padding: 5%; position: relative; z-index: 10; overflow: hidden;
         }
-        .content-wrapper { max-width: 1000px; width: 100%; z-index: 10; }
+        .content-wrapper { max-width: 1050px; width: 100%; z-index: 10; position: relative; }
 
-        /* Animations */
+        /* --- ANIMATIONS --- */
         .anim-fade-up { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .anim-fade-right { opacity: 0; transform: translateX(-50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .anim-scale { opacity: 0; transform: scale(0.9); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        
         .slide.in-view .anim-fade-up { opacity: 1; transform: translateY(0); }
         .slide.in-view .anim-fade-right { opacity: 1; transform: translateX(0); }
         .slide.in-view .anim-scale { opacity: 1; transform: scale(1); }
         .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; }
         .delay-3 { transition-delay: 0.3s; } .delay-4 { transition-delay: 0.4s; }
 
-        /* Hero */
-        .hero-layout { display: flex; align-items: center; gap: 50px; }
+        /* --- HERO SECTION --- */
+        .hero-layout { display: flex; align-items: center; gap: 60px; }
         .profile-img-container { position: relative; }
         .profile-img {
-            width: 230px; height: 230px; border-radius: 50%;
+            width: 250px; height: 250px; border-radius: 50%;
             object-fit: cover; border: 3px solid var(--accent);
-            box-shadow: 0 0 35px var(--accent-dim); z-index: 2; position: relative;
+            z-index: 5; position: relative; box-shadow: 0 0 40px var(--accent-glow);
         }
         .profile-ring {
             position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px;
-            border-radius: 50%; border: 3px solid rgba(0, 240, 255, 0.1);
-            border-top-color: var(--accent); border-bottom-color: var(--accent);
-            animation: rotate 8s linear infinite; z-index: 1;
+            border-radius: 50%; border: 4px dashed rgba(0, 240, 255, 0.4);
+            animation: rotate 15s linear infinite; z-index: 1;
         }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+
         .hero-title {
-            font-size: 4.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px;
+            font-size: 4.8rem; font-weight: 800; line-height: 1; margin-bottom: 10px;
             background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
         }
         .hero-subtitle {
-            font-family: 'Fira Code', monospace; font-size: 1.15rem; color: var(--accent);
-            margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;
+            font-family: 'Fira Code', monospace; font-size: 1.2rem; color: var(--accent);
+            margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1.5px;
         }
         .hero-contacts { display: flex; gap: 15px; flex-wrap: wrap; }
         .contact-btn {
-            padding: 12px 24px; border: 1px solid var(--accent-dim); border-radius: 30px;
-            color: var(--text-main); text-decoration: none; display: flex; align-items: center;
-            gap: 10px; background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(10px);
-            transition: 0.3s ease; font-size: 0.95rem;
+            padding: 12px 24px; border: 1px solid var(--accent-glow); border-radius: 30px;
+            color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px;
+            background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(10px);
+            transition: 0.3s ease; font-size: 0.95rem; font-weight: 600;
         }
         .contact-btn:hover {
-            background: var(--accent-dim); border-color: var(--accent);
-            box-shadow: 0 0 20px var(--accent-dim); transform: translateY(-3px);
+            background: rgba(0, 240, 255, 0.2); border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-3px);
         }
         .scroll-indicator {
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            animation: bounce 2s infinite; color: var(--accent); font-size: 1.5rem; opacity: 0.7;
+            animation: bounce 2s infinite; color: var(--accent); font-size: 1.5rem; z-index: 20;
         }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-15px) translateX(-50%); } 60% { transform: translateY(-7px) translateX(-50%); } }
 
-        /* Sections & Cards */
+        /* --- GLASSMORPHISM CARDS --- */
         .section-header {
-            font-size: 2.2rem; margin-bottom: 25px; font-weight: 800;
-            display: flex; align-items: center; gap: 15px; text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            font-size: 2.5rem; margin-bottom: 25px; font-weight: 800;
+            display: flex; align-items: center; gap: 15px; z-index: 10; position: relative;
         }
-        .section-header i { color: var(--accent); }
+        .section-header i { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        
         .glass-card {
-            background: var(--bg-card); padding: 40px; border-radius: 20px;
-            border: 1px solid rgba(0, 240, 255, 0.2); backdrop-filter: blur(15px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            background: var(--bg-card); padding: 40px; border-radius: 16px;
+            border: 1px solid rgba(0, 240, 255, 0.3); backdrop-filter: blur(25px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
+        .glass-card:hover { border-color: rgba(0, 240, 255, 0.6); transform: translateY(-5px); }
         
-        /* Summary & Skills */
         .summary-text { font-size: 1.25rem; line-height: 1.8; color: var(--text-dim); }
-        .highlight { color: var(--text-main); font-weight: 600; text-shadow: 0 0 10px rgba(0,240,255,0.3); }
-        
-        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-        .skill-box {
-            background: rgba(8, 12, 22, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 25px;
-            border-radius: 15px; transition: 0.3s ease; backdrop-filter: blur(10px);
-        }
-        .skill-box:hover { border-color: var(--accent); transform: scale(1.05); box-shadow: 0 0 25px var(--accent-dim); }
-        .skill-icon { font-size: 2rem; color: var(--accent); margin-bottom: 15px; }
-        .skill-box h3 { font-size: 1.1rem; margin-bottom: 15px; }
-        .tech-list { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 8px;}
+        .highlight { color: #fff; font-weight: 600; text-shadow: 0 0 10px var(--accent-glow); }
 
-        /* Experience Detail Cards */
-        .exp-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
-        .exp-title { font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
-        .exp-company { font-size: 1.1rem; color: var(--accent); font-family: 'Fira Code', monospace; }
-        .exp-date { font-size: 1rem; color: var(--text-dim); background: rgba(0, 240, 255, 0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--accent-dim); }
-        .exp-bullets { list-style: none; margin-top: 20px; }
+        /* Skills Grid */
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; }
+        .skill-box {
+            background: rgba(10, 15, 30, 0.7); border: 1px solid rgba(0,240,255,0.2);
+            padding: 30px; border-radius: 12px; transition: 0.3s ease; backdrop-filter: blur(15px);
+        }
+        .skill-box:hover {
+            border-color: var(--accent); transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(0,240,255,0.2);
+        }
+        .skill-icon { font-size: 2.2rem; color: var(--accent); margin-bottom: 15px; }
+        .skill-box h3 { font-size: 1.3rem; margin-bottom: 18px; color: #fff; }
+        .tech-list { font-family: 'Fira Code', monospace; font-size: 0.95rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 10px;}
+        .tech-list span::before { content: '>'; color: var(--accent); margin-right: 10px; font-weight: bold; }
+
+        /* Experience Detailing */
+        .exp-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid rgba(0, 240, 255, 0.3); padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
+        .exp-title { font-size: 1.8rem; font-weight: 700; color: #fff; }
+        .exp-company { font-size: 1.1rem; color: var(--accent); font-family: 'Fira Code', monospace; margin-top: 5px; }
+        .exp-date { font-size: 0.95rem; color: #fff; background: rgba(0, 240, 255, 0.15); padding: 6px 12px; border-radius: 4px; border: 1px solid var(--accent-glow); font-family: 'Fira Code', monospace; }
+        .exp-bullets { list-style: none; }
         .exp-bullets li {
-            position: relative; padding-left: 25px; margin-bottom: 15px;
+            position: relative; padding-left: 30px; margin-bottom: 15px;
             font-size: 1.05rem; line-height: 1.6; color: var(--text-dim);
         }
         .exp-bullets li::before {
-            content: '▹'; position: absolute; left: 0; top: 0;
-            color: var(--accent); font-size: 1.2rem;
+            content: '\f101'; font-family: 'Font Awesome 5 Free'; font-weight: 900;
+            position: absolute; left: 0; top: 2px; color: var(--accent); font-size: 1.1rem;
         }
 
-        /* Edu & Cert Cards */
+        /* Edu & Cert */
         .credential-box { text-align: center; }
-        .credential-box i { font-size: 3rem; color: var(--accent); margin-bottom: 20px; }
-        .credential-box h3 { font-size: 1.5rem; margin-bottom: 15px; }
-        .credential-box p { font-size: 1.1rem; color: var(--text-dim); line-height: 1.6; }
-        .cert-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-        .cert-tag { background: rgba(0,240,255,0.1); border: 1px solid var(--accent-dim); padding: 8px 15px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); }
+        .credential-box i { font-size: 3.5rem; color: var(--accent); margin-bottom: 20px; }
+        .credential-box h3 { font-size: 1.6rem; margin-bottom: 15px; color: #fff; }
+        .cert-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
+        .cert-tag { 
+            background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); 
+            padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; 
+            font-size: 0.9rem; color: var(--accent); font-weight: bold;
+        }
 
         @media (max-width: 768px) {
             .hero-layout { flex-direction: column; text-align: center; gap: 20px;}
             .hero-title { font-size: 3rem; }
             .hero-contacts { justify-content: center; }
-            .section-header { font-size: 1.8rem; justify-content: center; }
+            .section-header { font-size: 2rem; justify-content: center; text-align: center; }
             .glass-card { padding: 25px; }
+            .skills-grid { grid-template-columns: 1fr; }
             .exp-header { flex-direction: column; align-items: flex-start; }
-            .radar-scanner { width: 300px; height: 300px; top: -50px; right: -50px; }
+            .dashboard-gauges, .hex-grille { display: none; }
+            .radar-scanner { width: 200px; height: 200px; top: -50px; right: -50px; opacity: 0.15; }
+            .can-bus-line { display: none; }
+            .telemetry-hud { left: 20px; }
+            .slide-watermark { font-size: 40vh; right: -15%; opacity: 0.04; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Background Elements -->
-    <div class="adas-grid-container"><div class="adas-grid"></div></div>
-    <div class="radar-scanner"><div class="radar-ring ring-1"></div><div class="radar-ring ring-2"></div></div>
-    <div class="ecu-node ecu-1" data-label="ADAS_ECU"></div>
-    <div class="ecu-node ecu-2" data-label="BCM_NODE"></div>
-    <div class="ecu-node ecu-3" data-label="TELEMATICS"></div>
+    <!-- 0. HEXAGONAL GRILLE -->
+    <div class="hex-grille"></div>
+
+    <!-- 1. LIVE TELEMETRY HUD -->
+    <div class="telemetry-hud" id="telemetryHud">
+        SYS_STATE: <span id="t-state">BOOTING...</span><br>
+        CAN_BUS: <span id="t-can">INITIALIZING</span><br>
+        MODULE: <span id="t-mod">USER_PROFILE</span><br>
+        SEC_LEVEL: <span id="t-sec">GRANTED</span>
+    </div>
+
+    <!-- 2. PHYSICAL CAN-BUS WIRE -->
+    <div class="can-bus-line">
+        <div class="can-bus-packet"></div>
+    </div>
+
+    <!-- 3. SPEEDOMETER/TACHOMETER GAUGE -->
+    <div class="dashboard-gauges">
+        <div class="gauge-circle"><div class="needle"></div></div>
+    </div>
+
+    <!-- 4. AUTONOMOUS DRIVING GRID -->
+    <div class="road-grid-container"><div class="road-grid"></div></div>
+    
+    <!-- 5. LIDAR SCANNER -->
+    <div class="radar-scanner"><div class="blip blip-1"></div><div class="blip blip-2"></div></div>
 
     <div class="scroll-container" id="scrollContainer">
         
-        <!-- Slide 1: Hero -->
-        <section class="slide">
+        <!-- Slide 1: Hero (Watermark: Fingerprint) -->
+        <section class="slide" data-state="SYSTEM_ONLINE" data-can="STANDBY" data-mod="IDENTITY_MATRIX" data-sec="GRANTED">
+            <i class="fas fa-fingerprint slide-watermark"></i>
             <div class="content-wrapper hero-layout">
                 <div class="profile-img-container anim-scale delay-1">
                     <img src="WhatsApp Image 2026-09-16 at 22.13.34.jpeg" alt="Satyam Saha" class="profile-img">
@@ -237,172 +353,191 @@
             <i class="fas fa-chevron-down scroll-indicator"></i>
         </section>
 
-        <!-- Slide 2: Summary -->
-        <section class="slide">
+        <!-- Slide 2: Summary (Watermark: Car Battery/ECU) -->
+        <section class="slide" data-state="DIAG_ACTIVE" data-can="TX_RX_NOMINAL" data-mod="SYS_ARCHITECTURE" data-sec="ASIL_B">
+            <i class="fas fa-car-battery slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-cogs"></i> System Architecture</h2>
+                <h2 class="section-header anim-fade-right"><i class="fas fa-car-battery"></i> System Architecture</h2>
                 <div class="glass-card summary-text anim-scale delay-1">
-                    Senior Software Developer with 5+ years of experience in <span class="highlight">AUTOSAR Adaptive and Classic</span>, <span class="highlight">Embedded C/C++ BSW</span>, MCAL, and automotive middleware<span style="display:none">[cite: 1]</span>. Strong expertise in CAN, UDS diagnostics, COM stack, POSIX-based multithreaded systems, and Linux platforms. Hands-on experience with EB Tresos, CANoe, DaVinci, and Docker/Kubernetes in modern vehicle software development<span style="display:none">[cite: 1]</span>.
+                    Senior Software Developer with 5+ years of experience in <span class="highlight">AUTOSAR Adaptive and Classic</span>, <span class="highlight">Embedded C/C++ BSW</span>, MCAL, and automotive middleware. Strong expertise in CAN, UDS diagnostics, COM stack, POSIX-based multithreaded systems, and Linux platforms. Hands-on experience with EB Tresos, CANoe, DaVinci, and Docker/Kubernetes in modern vehicle software development.
                 </div>
             </div>
         </section>
 
-        <!-- Slide 3: Technical Arsenal -->
-        <section class="slide">
+        <!-- Slide 3: Technical Arsenal (Watermark: Microchip) -->
+        <section class="slide" data-state="LOADING_DRIVERS" data-can="HIGH_SPEED_CAN" data-mod="CORE_MODULES" data-sec="ASIL_D">
+            <i class="fas fa-microchip slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-microchip"></i> Core Modules</h2>
+                <h2 class="section-header anim-fade-right"><i class="fas fa-microchip"></i> Technical Arsenal</h2>
                 <div class="skills-grid">
+                    
                     <div class="skill-box anim-fade-up delay-1">
                         <i class="fas fa-code skill-icon"></i>
-                        <h3>Languages</h3>
+                        <h3>Core Engineering & Architecture</h3>
                         <div class="tech-list">
-                            <span>> Embedded C</span>
-                            <span>> C++ (11/14/17)</span>
-                            <span>> CAPL</span>
+                            <span>Embedded C & Modern C++ (11/14/17)</span>
+                            <span>STL (Standard Template Library) & Memory Management</span>
+                            <span>POSIX Multithreading & Concurrency</span>
+                            <span>OOD, SOLID Principles & Structural Design Patterns</span>
+                            <span>CAPL Scripting & Bash/Python</span>
                         </div>
                     </div>
+                    
                     <div class="skill-box anim-fade-up delay-2">
-                        <i class="fas fa-car skill-icon"></i>
-                        <h3>Automotive</h3>
+                        <i class="fas fa-car-side skill-icon"></i>
+                        <h3>Automotive OS & Stacks</h3>
                         <div class="tech-list">
-                            <span>> Classic & Adaptive AUTOSAR</span>
-                            <span>> BSW & MCAL</span>
-                            <span>> COM Stack & UDS</span>
+                            <span>Classic & Adaptive AUTOSAR (BSW, MCAL, RTE)</span>
+                            <span>AUTOSAR Stacks: COM, DIAG, NvM, UCM</span>
+                            <span>QNX, RTOS & Embedded Linux OS</span>
+                            <span>ASPICE Level 3 Compliance & Bidirectional Traceability</span>
+                            <span>ISO 26262 (ASIL-B) Functional Safety Compliance</span>
                         </div>
                     </div>
+                    
                     <div class="skill-box anim-fade-up delay-3">
                         <i class="fas fa-network-wired skill-icon"></i>
-                        <h3>Protocols</h3>
+                        <h3>Protocols & IPC</h3>
                         <div class="tech-list">
-                            <span>> CAN & SOME/IP</span>
-                            <span>> DDS & UWB</span>
-                            <span>> MQTT</span>
+                            <span>CAN, CAN-FD, LIN & Ethernet</span>
+                            <span>UDS (ISO 14229) & Diagnostics request/response</span>
+                            <span>SOME/IP (COVESA) & DDS (Service Oriented Architecture)</span>
+                            <span>Linux Kernel System Calls & IPC (Inter-Process Comm)</span>
+                            <span>UWB (Ultra-Wideband) & MQTT for Telematics</span>
                         </div>
                     </div>
+                    
                     <div class="skill-box anim-fade-up delay-4">
                         <i class="fas fa-laptop-code skill-icon"></i>
-                        <h3>Tools & DevOps</h3>
+                        <h3>Tools, Debugging & DevOps</h3>
                         <div class="tech-list">
-                            <span>> Vector CANoe / EB Tresos</span>
-                            <span>> Docker / K8s (K3s)</span>
-                            <span>> GitLab CI/CD</span>
+                            <span>Vector CANoe, CANalyzer & vTESTstudio</span>
+                            <span>EB Tresos, DaVinci Configurator & dSPACE SystemDesk</span>
+                            <span>Lauterbach Trace32, GDB Debugging & CMake</span>
+                            <span>Docker & Kubernetes (K3s) Containerization</span>
+                            <span>GitLab CI/CD, Jira & VectorCAST (Unit Testing)</span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
 
-        <!-- Slide 4: Experience 1 - TCS -->
-        <section class="slide">
+        <!-- Slide 4: Experience 1 (Watermark: Route) -->
+        <section class="slide" data-state="EXECUTION_ROUTINE" data-can="SOVD_SYNC" data-mod="EXP_THREAD_01" data-sec="VERIFIED">
+            <i class="fas fa-code-branch slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
                             <div class="exp-title">Information Technology Analyst</div>
                             <div class="exp-company">Tata Consultancy Services (TCS) | Pune</div>
                         </div>
-                        <div class="exp-date">August 2026 - Present</div>
+                        <div class="exp-date">AUG 2026 - PRESENT</div>
                     </div>
                     <ul class="exp-bullets">
-                        <li>Engaged in designing and building the Data Collector module codebase for a leading automotive client<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Contributing to the architecture and implementation of SOVD-compliant systems<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Developing ASPICE-compliant automotive C++ applications to meet strict industry standards<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Engaged in designing and building the Data Collector module codebase for a leading automotive client.</li>
+                        <li>Contributing to the architecture and implementation of SOVD-compliant systems.</li>
+                        <li>Developing ASPICE-compliant automotive C++ applications to meet strict industry standards.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 5: Experience 2 - KPIT -->
-        <section class="slide">
+        <!-- Slide 5: Experience 2 (Watermark: Cogs) -->
+        <section class="slide" data-state="EXECUTION_ROUTINE" data-can="MIDDLEWARE_ACTIVE" data-mod="EXP_THREAD_02" data-sec="ASIL_B">
+            <i class="fas fa-cogs slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
                             <div class="exp-title">Senior Software Engineer</div>
                             <div class="exp-company">KPIT Technologies | Pune</div>
                         </div>
-                        <div class="exp-date">May 2024 - July 2026</div>
+                        <div class="exp-date">MAY 2024 - JUL 2026</div>
                     </div>
                     <ul class="exp-bullets">
-                        <li>Formulated UML diagrams for high-level system and class architectural designs<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Developed and integrated Adaptive AUTOSAR middleware applications and services in C++(11/14/17)<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Developed multithreaded C++ applications using POSIX threading concepts, ensuring thread safety and optimal performance<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Contributed to ASIL-B safety goals by implementing low-level diagnostic mechanisms, including RAM/ROM tests, and ensuring 95%+ unit test coverage in accordance with ISO 26262<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Developed middleware in an ASPICE Level 3 environment, maintaining bidirectional traceability and compliance with MISRA C++ guidelines<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Formulated UML diagrams for high-level system and class architectural designs.</li>
+                        <li>Developed and integrated Adaptive AUTOSAR middleware applications and services in C++(11/14/17).</li>
+                        <li>Developed multithreaded C++ applications using POSIX threading concepts, ensuring thread safety and optimal performance.</li>
+                        <li>Contributed to ASIL-B safety goals by implementing low-level diagnostic mechanisms, including RAM/ROM tests, and ensuring 95%+ unit test coverage in accordance with ISO 26262.</li>
+                        <li>Developed middleware in an ASPICE Level 3 environment, maintaining bidirectional traceability.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 6: Experience 3 - Cognizant (Associate) -->
-        <section class="slide">
+        <!-- Slide 6: Experience 3 (Watermark: Diagnostics/Heartbeat) -->
+        <section class="slide" data-state="EXECUTION_ROUTINE" data-can="UDS_DIAG_REQ" data-mod="EXP_THREAD_03" data-sec="VERIFIED">
+            <i class="fas fa-heartbeat slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
                             <div class="exp-title">Associate</div>
                             <div class="exp-company">Cognizant | Pune</div>
                         </div>
-                        <div class="exp-date">Oct 2023 - May 2024</div>
+                        <div class="exp-date">OCT 2023 - MAY 2024</div>
                     </div>
                     <ul class="exp-bullets">
-                        <li>Implemented UDS diagnostic services within the Diagnostics stack, managing request/response handling<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Configured COM stack development in the BSW layer based on architectural ECU extracts<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Authored DBC files for enhanced signal simulation and designed interactive Graphical User Interfaces (GUI) within Vector CANoe environments<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Developed BSW components in CEI (Siemens) and configured MCAL layers using EB Tresos<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Validated Digital Output, PWM, and Flex Frequency functionalities via hardware bench testing<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Implemented UDS diagnostic services within the Diagnostics stack, managing request/response handling.</li>
+                        <li>Configured COM stack development in the BSW layer based on architectural ECU extracts.</li>
+                        <li>Authored DBC files for enhanced signal simulation and designed interactive Graphical User Interfaces (GUI) within Vector CANoe environments.</li>
+                        <li>Developed BSW components in CEI (Siemens) and configured MCAL layers using EB Tresos.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 7: Experience 4 - Cognizant (Programmer Analyst) -->
-        <section class="slide">
+        <!-- Slide 7: Experience 4 (Watermark: Broadcast Tower) -->
+        <section class="slide" data-state="EXECUTION_ROUTINE" data-can="SOME_IP_BROADCAST" data-mod="EXP_THREAD_04" data-sec="VERIFIED">
+            <i class="fas fa-broadcast-tower slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
                             <div class="exp-title">Programmer Analyst</div>
                             <div class="exp-company">Cognizant | Pune</div>
                         </div>
-                        <div class="exp-date">Sep 2021 - Sep 2023</div>
+                        <div class="exp-date">SEP 2021 - SEP 2023</div>
                     </div>
                     <ul class="exp-bullets">
-                        <li>Developed SOME/IP C++ applications using COVESA library on Raspberry Pi, demonstrating Service Oriented Architecture (SOA) using notifier and subscriber models<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Containerized applications using Docker and deployed on Kubernetes cluster<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Engineered and deployed keyfob features using the Arduino IDE and ESP32 UWB module<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Orchestrated ASWC development within dSPACE SystemDesk, defining port interfaces per Classic AUTOSAR standards<span style="display:none">[cite: 1]</span>.</li>
-                        <li>Facilitated test automation through the implementation of CAPL scripting and engineered simulation panels in Vector CANoe<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Developed SOME/IP C++ applications using COVESA library on Raspberry Pi, demonstrating Service Oriented Architecture (SOA).</li>
+                        <li>Containerized applications using Docker and deployed on Kubernetes cluster.</li>
+                        <li>Engineered and deployed keyfob features using the Arduino IDE and ESP32 UWB module.</li>
+                        <li>Orchestrated ASWC development within dSPACE SystemDesk, defining port interfaces per Classic AUTOSAR standards.</li>
                     </ul>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 8: Education -->
-        <section class="slide">
+        <!-- Slide 8: Education (Watermark: University) -->
+        <section class="slide" data-state="DATA_ARCHIVE" data-can="STANDBY" data-mod="ACADEMIC_RECORD" data-sec="CLEARED">
+            <i class="fas fa-university slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-graduation-cap"></i> Academic Background</h2>
+                <h2 class="section-header anim-fade-right"><i class="fas fa-university"></i> Academic Record</h2>
                 <div class="glass-card credential-box anim-scale delay-1">
-                    <i class="fas fa-university"></i>
+                    <i class="fas fa-graduation-cap"></i>
                     <h3>B.Tech - Electronics and Communication Engineering</h3>
-                    <p style="color: var(--accent); font-family: 'Fira Code', monospace; margin-bottom: 5px;">Netaji Subhash Engineering College, Kolkata</p>
-                    <p>2017 - 2021 | DGPA: 8.51<span style="display:none">[cite: 1]</span></p>
+                    <p style="color: var(--accent); font-family: 'Fira Code', monospace; margin-bottom: 10px; font-size: 1.1rem;">Netaji Subhash Engineering College, Kolkata</p>
+                    <p style="color: var(--text-dim);">2017 - 2021 | DGPA: 8.51</p>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 9: Certifications -->
-        <section class="slide">
+        <!-- Slide 9: Certifications (Watermark: Shield) -->
+        <section class="slide" data-state="SEC_CLEARANCE" data-can="CLOUD_SYNC" data-mod="CREDENTIALS" data-sec="ENCRYPTED">
+            <i class="fas fa-shield-alt slide-watermark"></i>
             <div class="content-wrapper">
                 <h2 class="section-header anim-fade-right"><i class="fas fa-shield-alt"></i> Industry Certifications</h2>
                 <div class="glass-card credential-box anim-scale delay-1">
                     <i class="fas fa-cloud"></i>
                     <h3>Cloud & AI Credentials</h3>
-                    <p>Officially certified across Microsoft Azure and AWS ecosystems.<span style="display:none">[cite: 1]</span></p>
+                    <p style="color: var(--text-dim); margin-bottom: 10px;">Officially certified across Microsoft Azure and AWS global ecosystems.</p>
                     <div class="cert-tags">
                         <span class="cert-tag">AZ-900</span>
                         <span class="cert-tag">AI-900</span>
@@ -420,15 +555,32 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const slides = document.querySelectorAll('.slide');
+            
+            const tState = document.getElementById('t-state');
+            const tCan = document.getElementById('t-can');
+            const tMod = document.getElementById('t-mod');
+            const tSec = document.getElementById('t-sec');
+
             const observerOptions = {
                 root: document.getElementById('scrollContainer'),
-                threshold: 0.4 
+                threshold: 0.5 
             };
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('in-view');
+                        
+                        tState.innerText = entry.target.getAttribute('data-state');
+                        tCan.innerText = entry.target.getAttribute('data-can');
+                        tMod.innerText = entry.target.getAttribute('data-mod');
+                        tSec.innerText = entry.target.getAttribute('data-sec');
+                        
+                        const spanList = document.querySelectorAll('.telemetry-hud span');
+                        spanList.forEach(span => {
+                            span.style.color = '#00f0ff';
+                            setTimeout(() => { span.style.color = '#ffffff'; }, 300);
+                        });
                     } else {
                         entry.target.classList.remove('in-view');
                     }
