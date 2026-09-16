@@ -78,15 +78,18 @@
 
         /* --- HERO & GENERAL CONTENT --- */
         .hero-layout { display: flex; align-items: center; gap: 60px; }
-        .profile-img-container { position: relative; }
+        .profile-img-container { position: relative; margin: 0 auto; }
         .profile-img { width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); z-index: 5; position: relative; box-shadow: 0 0 40px var(--accent-glow); }
         .profile-ring { position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px; border-radius: 50%; border: 4px dashed rgba(0, 240, 255, 0.4); animation: rotate 15s linear infinite; z-index: 1; }
         @keyframes rotate { 100% { transform: rotate(360deg); } }
         .hero-title { font-size: 4.8rem; font-weight: 800; line-height: 1; margin-bottom: 10px; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0, 240, 255, 0.2); }
-        .hero-subtitle { font-family: 'Fira Code', monospace; font-size: 1.2rem; color: var(--accent); margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .hero-subtitle { font-family: 'Fira Code', monospace; font-size: 1.2rem; color: var(--accent); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1.5px; }
         .hero-contacts { display: flex; gap: 15px; flex-wrap: wrap; }
-        .contact-btn { padding: 12px 24px; border: 1px solid var(--accent-glow); border-radius: 30px; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px; background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(10px); transition: 0.3s ease; font-size: 0.95rem; font-weight: 600; }
+        
+        /* Fixed font family to Outfit for clean symbol rendering (@ sign) */
+        .contact-btn { padding: 12px 22px; border: 1px solid var(--accent-glow); border-radius: 30px; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px; background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(10px); transition: 0.3s ease; font-size: 0.95rem; font-weight: 600; font-family: 'Outfit', sans-serif; }
         .contact-btn:hover { background: rgba(0, 240, 255, 0.2); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-3px); }
+        
         .scroll-indicator { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; color: var(--accent); font-size: 1.5rem; z-index: 20; }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-15px) translateX(-50%); } 60% { transform: translateY(-7px) translateX(-50%); } }
 
@@ -140,34 +143,40 @@
         .cert-tag { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
 
         /* =========================================
-           MOBILE RESPONSIVENESS (OVERLAP FIX)
+           MOBILE RESPONSIVENESS
            ========================================= */
         @media (max-width: 768px) {
-            .hero-layout { flex-direction: column; text-align: center; gap: 20px;}
-            .hero-title { font-size: 2.5rem; }
-            .hero-subtitle { font-size: 0.95rem; }
-            .hero-contacts { justify-content: center; }
+            .hero-layout { flex-direction: column; text-align: center; gap: 15px;}
+            
+            .profile-img-container { width: 160px; height: 160px; margin-bottom: 5px; }
+            .profile-img { width: 160px; height: 160px; }
+            .profile-ring { top: -10px; left: -10px; right: -10px; bottom: -10px; border-width: 3px; }
+
+            .hero-title { font-size: 2.2rem; }
+            .hero-subtitle { font-size: 0.8rem; margin-bottom: 12px; }
+            
+            .hero-contacts { justify-content: center; gap: 8px; }
+            .contact-btn { padding: 8px 14px; font-size: 0.78rem; }
+            
             .section-header { font-size: 1.6rem; justify-content: flex-start; text-align: left; }
             .mobile-swipe-hint { display: block; } 
             .glass-card { padding: 20px; }
             
-            /* PUSH CONTENT DOWN ON MOBILE SO IT DOESN'T OVERLAP HUD TELEMETRY */
             .scroll-container { scroll-snap-type: y mandatory; overflow-y: scroll; overflow-x: hidden; }
             .slide { 
                 height: 100vh; height: 100dvh; min-height: 100dvh; 
-                padding: 110px 5% 40px 5%; /* Increased top padding to clear HUD */
+                padding: 105px 5% 40px 5%; 
                 scroll-snap-align: start; 
                 overflow: hidden; 
                 justify-content: flex-start; 
             }
             .content-wrapper { 
-                max-height: 75vh; /* Safe viewing window inside screen height */
+                max-height: 78vh; 
                 overflow-y: auto; 
                 padding-right: 5px; 
             }
             .content-wrapper::-webkit-scrollbar { display: none; }
             
-            /* HORIZONTAL SWIPE CAROUSEL FOR SKILLS */
             .skills-grid { 
                 display: flex; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
                 scroll-snap-type: x mandatory; padding: 5px 0 15px 0; gap: 15px;
@@ -183,7 +192,6 @@
             
             .exp-header { flex-direction: column; align-items: flex-start; }
             
-            /* Hide heavy background graphics on mobile */
             .dashboard-gauges, .hex-grille { display: none; }
             .radar-scanner { width: 150px; height: 150px; top: -30px; right: -30px; opacity: 0.15; }
             .can-bus-line { display: none; }
@@ -218,10 +226,10 @@
                 </div>
                 <div>
                     <h1 class="hero-title anim-fade-up delay-2">SATYAM SAHA</h1>
-                    <p class="hero-subtitle anim-fade-up delay-3">>> Senior Developer | Embedded C++ & AUTOSAR</p>
+                    <p class="hero-subtitle anim-fade-up delay-3">&gt;&gt; Senior Developer | Embedded C++ &amp; AUTOSAR</p>
                     <div class="hero-contacts anim-fade-up delay-4">
-                        <a href="mailto:satyamsaha07@gmail.com" class="contact-btn"><i class="fas fa-envelope"></i> Email</a>
-                        <a href="tel:+918409244192" class="contact-btn"><i class="fas fa-phone"></i> Call</a>
+                        <a href="mailto:satyamsaha07@gmail.com" class="contact-btn"><i class="fas fa-envelope"></i> satyamsaha07@gmail.com</a>
+                        <a href="tel:+918409244192" class="contact-btn"><i class="fas fa-phone"></i> +91 8409244192</a>
                         <a href="https://maps.google.com/?q=Pune,India" target="_blank" class="contact-btn"><i class="fas fa-map-marker-alt"></i> Pune</a>
                     </div>
                 </div>
@@ -341,7 +349,7 @@
             </div>
         </section>
 
-        <!-- Slide 4: Experience 1 -->
+        <!-- Slide 4: Experience 1 (TCS) -->
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="SOVD_SYNC" data-mod="EXP_THREAD_01" data-sec="VERIFIED">
             <i class="fas fa-code-branch slide-watermark"></i>
             <div class="content-wrapper">
@@ -365,7 +373,7 @@
             </div>
         </section>
 
-        <!-- Slide 5: Experience 2 -->
+        <!-- Slide 5: Experience 2 (KPIT) -->
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="MIDDLEWARE_ACTIVE" data-mod="EXP_THREAD_02" data-sec="ASIL_B">
             <i class="fas fa-cogs slide-watermark"></i>
             <div class="content-wrapper">
@@ -391,7 +399,7 @@
             </div>
         </section>
 
-        <!-- Slide 6: Experience 3 -->
+        <!-- Slide 6: Experience 3 (Cognizant - Associate) -->
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="UDS_DIAG_REQ" data-mod="EXP_THREAD_03" data-sec="VERIFIED">
             <i class="fas fa-heartbeat slide-watermark"></i>
             <div class="content-wrapper">
@@ -416,7 +424,7 @@
             </div>
         </section>
 
-        <!-- Slide 7: Experience 4 -->
+        <!-- Slide 7: Experience 4 (Cognizant - Programmer Analyst) -->
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="SOME_IP_BROADCAST" data-mod="EXP_THREAD_04" data-sec="VERIFIED">
             <i class="fas fa-broadcast-tower slide-watermark"></i>
             <div class="content-wrapper">
@@ -429,7 +437,7 @@
                             <div class="exp-title">Programmer Analyst</div>
                             <div class="exp-company">Cognizant | Pune</div>
                         </div>
-                        <div class="exp-date">SEP 2021 - SEP 2023</div>
+                        <div class="exp-date">SEP 2022 - SEP 2023</div>
                     </div>
                     <ul class="exp-bullets">
                         <li>Developed SOME/IP C++ applications using COVESA library on Raspberry Pi for SOA.</li>
@@ -441,7 +449,31 @@
             </div>
         </section>
 
-        <!-- Slide 8: Education -->
+        <!-- Slide 8: Experience 5 (Cognizant - Programmer Analyst Trainee) -->
+        <section class="slide" data-state="EXECUTION_ROUTINE" data-can="BOOTSTRAP_INIT" data-mod="EXP_THREAD_05" data-sec="VERIFIED">
+            <i class="fas fa-seedling slide-watermark"></i>
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-route"></i> Execution Route</span>
+                </h2>
+                <div class="glass-card anim-scale delay-1">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-title">Programmer Analyst Trainee</div>
+                            <div class="exp-company">Cognizant | Pune</div>
+                        </div>
+                        <div class="exp-date">SEP 2021 - SEP 2022</div>
+                    </div>
+                    <ul class="exp-bullets">
+                        <li>Underwent intensive foundational training in Modern C++, Data Structures, and Embedded Systems.</li>
+                        <li>Gained hands-on exposure to automotive software engineering workflows and microcontroller fundamentals.</li>
+                        <li>Contributed to early-stage prototyping and unit testing scripts for internal utilities.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Education -->
         <section class="slide" data-state="DATA_ARCHIVE" data-can="STANDBY" data-mod="ACADEMIC_RECORD" data-sec="CLEARED">
             <i class="fas fa-university slide-watermark"></i>
             <div class="content-wrapper">
@@ -457,7 +489,7 @@
             </div>
         </section>
 
-        <!-- Slide 9: Certifications -->
+        <!-- Slide 10: Certifications -->
         <section class="slide" data-state="SEC_CLEARANCE" data-can="CLOUD_SYNC" data-mod="CREDENTIALS" data-sec="ENCRYPTED">
             <i class="fas fa-shield-alt slide-watermark"></i>
             <div class="content-wrapper">
