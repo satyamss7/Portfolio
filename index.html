@@ -78,8 +78,6 @@
 
         /* --- HERO & GENERAL CONTENT --- */
         .hero-layout { display: flex; align-items: center; gap: 60px; }
-        
-        /* Safe Profile Wrapper to stop ring clipping */
         .profile-img-container { position: relative; margin: 0 auto; width: 250px; height: 250px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
         .profile-img { width: 220px; height: 220px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); z-index: 5; position: relative; box-shadow: 0 0 40px var(--accent-glow); }
         .profile-ring { position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border-radius: 50%; border: 4px dashed rgba(0, 240, 255, 0.4); animation: rotate 15s linear infinite; z-index: 1; pointer-events: none; }
@@ -145,38 +143,38 @@
         .cert-tag { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
 
         /* =========================================
-           MOBILE RESPONSIVENESS (PERFECT CONTAINMENT)
+           MOBILE RESPONSIVENESS (PERFECTLY CENTRED)
            ========================================= */
         @media (max-width: 768px) {
-            .hero-layout { flex-direction: column; text-align: center; gap: 15px;}
+            .hero-layout { flex-direction: column; text-align: center; gap: 12px;}
             
-            /* Perfectly contained sizing to completely eliminate edge clipping */
-            .profile-img-container { width: 170px; height: 170px; margin-bottom: 5px; overflow: visible; }
-            .profile-img { width: 140px; height: 140px; }
+            .profile-img-container { width: 160px; height: 160px; margin-bottom: 3px; overflow: visible; }
+            .profile-img { width: 135px; height: 135px; }
             .profile-ring { top: 0px; left: 0px; right: 0px; bottom: 0px; border-width: 3px; }
 
-            .hero-title { font-size: 2.2rem; }
-            .hero-subtitle { font-size: 0.8rem; margin-bottom: 12px; }
+            .hero-title { font-size: 2.1rem; }
+            .hero-subtitle { font-size: 0.78rem; margin-bottom: 10px; }
             
-            .hero-contacts { justify-content: center; gap: 8px; }
-            .contact-btn { padding: 8px 14px; font-size: 0.78rem; }
+            .hero-contacts { justify-content: center; gap: 6px; }
+            .contact-btn { padding: 7px 12px; font-size: 0.75rem; }
             
-            .section-header { font-size: 1.6rem; justify-content: flex-start; text-align: left; }
+            .section-header { font-size: 1.5rem; justify-content: flex-start; text-align: left; }
             .mobile-swipe-hint { display: block; } 
-            .glass-card { padding: 20px; }
+            .glass-card { padding: 18px; }
             
             .scroll-container { scroll-snap-type: y mandatory; overflow-y: scroll; overflow-x: hidden; }
             .slide { 
                 height: 100vh; height: 100dvh; min-height: 100dvh; 
-                padding: 105px 5% 40px 5%; 
+                padding: 70px 5% 20px 5%; 
                 scroll-snap-align: start; 
                 overflow: hidden; 
-                justify-content: flex-start; 
+                justify-content: center; /* PERFECT VERTICAL CENTERING */
+                align-items: center;
             }
             .content-wrapper { 
-                max-height: 78vh; 
+                max-height: calc(100dvh - 100px); /* Bounded safely to avoid top HUD collision */
                 overflow-y: auto; 
-                padding-right: 5px; 
+                padding-right: 2px; 
             }
             .content-wrapper::-webkit-scrollbar { display: none; }
             
@@ -188,18 +186,18 @@
             .skill-flip-container { 
                 flex: 0 0 85vw; 
                 scroll-snap-align: center; 
-                height: 310px; 
+                height: 295px; 
             }
-            .massive-icon { font-size: 4rem; margin-bottom: 15px; }
-            .skill-front h3 { font-size: 1.3rem; }
+            .massive-icon { font-size: 3.5rem; margin-bottom: 12px; }
+            .skill-front h3 { font-size: 1.2rem; }
             
             .exp-header { flex-direction: column; align-items: flex-start; }
             
             .dashboard-gauges, .hex-grille { display: none; }
             .radar-scanner { width: 150px; height: 150px; top: -30px; right: -30px; opacity: 0.15; }
             .can-bus-line { display: none; }
-            .telemetry-hud { left: 20px; font-size: 0.75rem; top: 15px; }
-            .slide-watermark { font-size: 30vh; right: -15%; opacity: 0.04; }
+            .telemetry-hud { left: 20px; font-size: 0.72rem; top: 12px; }
+            .slide-watermark { font-size: 25vh; right: -15%; opacity: 0.04; }
         }
     </style>
 </head>
