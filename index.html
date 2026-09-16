@@ -78,15 +78,17 @@
 
         /* --- HERO & GENERAL CONTENT --- */
         .hero-layout { display: flex; align-items: center; gap: 60px; }
-        .profile-img-container { position: relative; margin: 0 auto; }
-        .profile-img { width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); z-index: 5; position: relative; box-shadow: 0 0 40px var(--accent-glow); }
-        .profile-ring { position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px; border-radius: 50%; border: 4px dashed rgba(0, 240, 255, 0.4); animation: rotate 15s linear infinite; z-index: 1; }
+        
+        /* Safe Profile Wrapper to stop ring clipping */
+        .profile-img-container { position: relative; margin: 0 auto; width: 250px; height: 250px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .profile-img { width: 220px; height: 220px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); z-index: 5; position: relative; box-shadow: 0 0 40px var(--accent-glow); }
+        .profile-ring { position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; border-radius: 50%; border: 4px dashed rgba(0, 240, 255, 0.4); animation: rotate 15s linear infinite; z-index: 1; pointer-events: none; }
+        
         @keyframes rotate { 100% { transform: rotate(360deg); } }
         .hero-title { font-size: 4.8rem; font-weight: 800; line-height: 1; margin-bottom: 10px; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(0, 240, 255, 0.2); }
         .hero-subtitle { font-family: 'Fira Code', monospace; font-size: 1.2rem; color: var(--accent); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1.5px; }
         .hero-contacts { display: flex; gap: 15px; flex-wrap: wrap; }
         
-        /* Fixed font family to Outfit for clean symbol rendering (@ sign) */
         .contact-btn { padding: 12px 22px; border: 1px solid var(--accent-glow); border-radius: 30px; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 10px; background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(10px); transition: 0.3s ease; font-size: 0.95rem; font-weight: 600; font-family: 'Outfit', sans-serif; }
         .contact-btn:hover { background: rgba(0, 240, 255, 0.2); border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-3px); }
         
@@ -143,14 +145,15 @@
         .cert-tag { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
 
         /* =========================================
-           MOBILE RESPONSIVENESS
+           MOBILE RESPONSIVENESS (PERFECT CONTAINMENT)
            ========================================= */
         @media (max-width: 768px) {
             .hero-layout { flex-direction: column; text-align: center; gap: 15px;}
             
-            .profile-img-container { width: 160px; height: 160px; margin-bottom: 5px; }
-            .profile-img { width: 160px; height: 160px; }
-            .profile-ring { top: -10px; left: -10px; right: -10px; bottom: -10px; border-width: 3px; }
+            /* Perfectly contained sizing to completely eliminate edge clipping */
+            .profile-img-container { width: 170px; height: 170px; margin-bottom: 5px; overflow: visible; }
+            .profile-img { width: 140px; height: 140px; }
+            .profile-ring { top: 0px; left: 0px; right: 0px; bottom: 0px; border-width: 3px; }
 
             .hero-title { font-size: 2.2rem; }
             .hero-subtitle { font-size: 0.8rem; margin-bottom: 12px; }
