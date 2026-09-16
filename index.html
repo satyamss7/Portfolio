@@ -90,15 +90,20 @@
         .scroll-indicator { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); animation: bounce 2s infinite; color: var(--accent); font-size: 1.5rem; z-index: 20; }
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); } 40% { transform: translateY(-15px) translateX(-50%); } 60% { transform: translateY(-7px) translateX(-50%); } }
 
-        .section-header { font-size: 2.5rem; margin-bottom: 25px; font-weight: 800; display: flex; align-items: center; gap: 15px; z-index: 10; position: relative; }
+        .section-header { font-size: 2.5rem; margin-bottom: 25px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; z-index: 10; position: relative; }
+        .header-title-group { display: flex; align-items: center; gap: 15px; }
         .section-header i { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+        
+        .mobile-swipe-hint { display: none; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: var(--accent); font-weight: 400; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
         .glass-card { background: var(--bg-card); padding: 40px; border-radius: 16px; border: 1px solid rgba(0, 240, 255, 0.3); backdrop-filter: blur(25px); box-shadow: 0 20px 40px rgba(0,0,0,0.8); transition: transform 0.3s ease, border-color 0.3s ease; }
         .glass-card:hover { border-color: rgba(0, 240, 255, 0.6); transform: translateY(-5px); }
         .summary-text { font-size: 1.25rem; line-height: 1.8; color: var(--text-dim); }
         .highlight { color: #fff; font-weight: 600; text-shadow: 0 0 10px var(--accent-glow); }
 
         /* =========================================
-           3D FLIP CARDS (UNIFORM SIZE & MASSIVE ICONS)
+           3D FLIP CARDS
            ========================================= */
         .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; }
         .skill-flip-container { perspective: 1000px; height: 320px; cursor: pointer; }
@@ -136,31 +141,47 @@
         .cert-tag { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
 
         /* =========================================
-           MOBILE RESPONSIVENESS FIX
+           MOBILE RESPONSIVENESS (SNAP RESTORED)
            ========================================= */
         @media (max-width: 768px) {
             .hero-layout { flex-direction: column; text-align: center; gap: 20px;}
             .hero-title { font-size: 3rem; }
             .hero-contacts { justify-content: center; }
-            .section-header { font-size: 2rem; justify-content: center; text-align: center; }
+            .section-header { font-size: 2rem; justify-content: flex-start; text-align: left; }
+            .mobile-swipe-hint { display: block; } /* Show swipe hint only on mobile */
             .glass-card { padding: 25px; }
             
-            /* Remove fixed grid columns for mobile */
-            .skills-grid { grid-template-columns: 1fr; }
-            .skill-flip-container { height: 350px; } 
-            
-            /* DISABLE SCROLL SNAP & FIXED HEIGHT ON MOBILE SO TALL CONTENT DOESN'T GET CUT */
-            .scroll-container { scroll-snap-type: none; overflow-x: hidden; }
+            /* RESTORE SNAP SCROLLING FOR MOBILE */
+            .scroll-container { scroll-snap-type: y mandatory; overflow-y: scroll; overflow-x: hidden; }
             .slide { 
-                height: auto; min-height: 100vh; overflow: visible; 
-                padding: 100px 5% 60px 5%; /* Adds breathing room top and bottom */
-                scroll-snap-align: none; 
+                height: 100vh; height: 100dvh; min-height: 100dvh; 
+                padding: 80px 5% 40px 5%; /* Top breathing room for HUD */
+                scroll-snap-align: start; 
+                overflow: hidden; 
+                justify-content: flex-start; /* Push content to top so it aligns nice */
             }
-            .content-wrapper { overflow: visible; max-height: none; }
+            .content-wrapper { 
+                max-height: 85vh; /* Internal scroll in case a card has too much text */
+                overflow-y: auto; 
+                padding-right: 5px; 
+            }
+            .content-wrapper::-webkit-scrollbar { display: none; }
+            
+            /* CONVERT SKILLS GRID TO HORIZONTAL SWIPE CAROUSEL */
+            .skills-grid { 
+                display: flex; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+                scroll-snap-type: x mandatory; padding: 5px 0 20px 0; gap: 15px;
+                -webkit-overflow-scrolling: touch; 
+            }
+            .skill-flip-container { 
+                flex: 0 0 85vw; /* Takes up 85% of screen width, hinting at the next card */
+                scroll-snap-align: center; 
+                height: 340px; 
+            }
             
             .exp-header { flex-direction: column; align-items: flex-start; }
             
-            /* Hide non-essential background graphics on mobile for performance */
+            /* Hide heavy graphics on mobile */
             .dashboard-gauges, .hex-grille { display: none; }
             .radar-scanner { width: 200px; height: 200px; top: -50px; right: -50px; opacity: 0.15; }
             .can-bus-line { display: none; }
@@ -210,33 +231,36 @@
         <section class="slide" data-state="DIAG_ACTIVE" data-can="TX_RX_NOMINAL" data-mod="SYS_ARCHITECTURE" data-sec="ASIL_B">
             <i class="fas fa-car-battery slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-car-battery"></i> System Architecture</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-car-battery"></i> System Architecture</span>
+                </h2>
                 <div class="glass-card summary-text anim-scale delay-1">
                     Senior Software Developer with 5+ years of experience in <span class="highlight">AUTOSAR Adaptive and Classic</span>, <span class="highlight">Embedded C/C++ BSW</span>, MCAL, and automotive middleware. Strong expertise in CAN, UDS diagnostics, COM stack, POSIX-based multithreaded systems, and Linux platforms. Hands-on experience with EB Tresos, CANoe, DaVinci, and Docker/Kubernetes in modern vehicle software development.
                 </div>
             </div>
         </section>
 
-        <!-- Slide 3: Technical Arsenal (3D FLIP CARDS) -->
+        <!-- Slide 3: Technical Arsenal (SWIPE CAROUSEL ON MOBILE) -->
         <section class="slide" data-state="LOADING_DRIVERS" data-can="HIGH_SPEED_CAN" data-mod="CORE_MODULES" data-sec="ASIL_D">
             <i class="fas fa-microchip slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-microchip"></i> Technical Arsenal</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-microchip"></i> Technical Arsenal</span>
+                    <span class="mobile-swipe-hint">[ SWIPE &gt; ]</span>
+                </h2>
                 
                 <div class="skills-grid">
                     
                     <!-- Card 1 -->
                     <div class="skill-flip-container anim-fade-up delay-1" onclick="this.classList.toggle('flipped')">
                         <div class="skill-flipper">
-                            <!-- FRONT -->
                             <div class="skill-front">
                                 <i class="fas fa-code massive-icon"></i>
                                 <h3>Core Engineering</h3>
                                 <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
-                            <!-- BACK -->
                             <div class="skill-back">
-                                <h3>Core Engineering <span class="close-hint">[X] CLOSE</span></h3>
+                                <h3>Core Engineering <span class="close-hint">[X]</span></h3>
                                 <div class="tech-list">
                                     <span>Embedded C & Modern C++ (11/14/17)</span>
                                     <span>STL & Memory Management</span>
@@ -251,17 +275,15 @@
                     <!-- Card 2 -->
                     <div class="skill-flip-container anim-fade-up delay-2" onclick="this.classList.toggle('flipped')">
                         <div class="skill-flipper">
-                            <!-- FRONT -->
                             <div class="skill-front">
                                 <i class="fas fa-car-side massive-icon"></i>
                                 <h3>Automotive OS</h3>
                                 <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
-                            <!-- BACK -->
                             <div class="skill-back">
-                                <h3>Automotive OS <span class="close-hint">[X] CLOSE</span></h3>
+                                <h3>Automotive OS <span class="close-hint">[X]</span></h3>
                                 <div class="tech-list">
-                                    <span>Classic & Adaptive AUTOSAR (BSW, MCAL, RTE)</span>
+                                    <span>Classic & Adaptive AUTOSAR</span>
                                     <span>AUTOSAR Stacks: COM, DIAG, NvM, UCM</span>
                                     <span>QNX, RTOS & Embedded Linux OS</span>
                                     <span>ASPICE Level 3 Traceability</span>
@@ -274,15 +296,13 @@
                     <!-- Card 3 -->
                     <div class="skill-flip-container anim-fade-up delay-3" onclick="this.classList.toggle('flipped')">
                         <div class="skill-flipper">
-                            <!-- FRONT -->
                             <div class="skill-front">
                                 <i class="fas fa-network-wired massive-icon"></i>
                                 <h3>Protocols & IPC</h3>
                                 <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
-                            <!-- BACK -->
                             <div class="skill-back">
-                                <h3>Protocols & IPC <span class="close-hint">[X] CLOSE</span></h3>
+                                <h3>Protocols & IPC <span class="close-hint">[X]</span></h3>
                                 <div class="tech-list">
                                     <span>CAN, CAN-FD, LIN & Ethernet</span>
                                     <span>UDS (ISO 14229) Diagnostics</span>
@@ -297,17 +317,15 @@
                     <!-- Card 4 -->
                     <div class="skill-flip-container anim-fade-up delay-4" onclick="this.classList.toggle('flipped')">
                         <div class="skill-flipper">
-                            <!-- FRONT -->
                             <div class="skill-front">
                                 <i class="fas fa-laptop-code massive-icon"></i>
                                 <h3>Tools & Debugging</h3>
                                 <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
-                            <!-- BACK -->
                             <div class="skill-back">
-                                <h3>Tools & Debugging <span class="close-hint">[X] CLOSE</span></h3>
+                                <h3>Tools & Debugging <span class="close-hint">[X]</span></h3>
                                 <div class="tech-list">
-                                    <span>Vector CANoe, CANalyzer & vTESTstudio</span>
+                                    <span>Vector CANoe, CANalyzer & vTEST</span>
                                     <span>EB Tresos & dSPACE SystemDesk</span>
                                     <span>Lauterbach Trace32, GDB & CMake</span>
                                     <span>Docker & Kubernetes (K3s)</span>
@@ -325,12 +343,14 @@
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="SOVD_SYNC" data-mod="EXP_THREAD_01" data-sec="VERIFIED">
             <i class="fas fa-code-branch slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-route"></i> Execution Route</span>
+                </h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
-                            <div class="exp-title">Information Technology Analyst</div>
-                            <div class="exp-company">Tata Consultancy Services (TCS) | Pune</div>
+                            <div class="exp-title">IT Analyst</div>
+                            <div class="exp-company">Tata Consultancy Services | Pune</div>
                         </div>
                         <div class="exp-date">AUG 2026 - PRESENT</div>
                     </div>
@@ -347,7 +367,9 @@
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="MIDDLEWARE_ACTIVE" data-mod="EXP_THREAD_02" data-sec="ASIL_B">
             <i class="fas fa-cogs slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-route"></i> Execution Route</span>
+                </h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
@@ -358,9 +380,9 @@
                     </div>
                     <ul class="exp-bullets">
                         <li>Formulated UML diagrams for high-level system and class architectural designs.</li>
-                        <li>Developed and integrated Adaptive AUTOSAR middleware applications and services in C++(11/14/17).</li>
-                        <li>Developed multithreaded C++ applications using POSIX threading concepts, ensuring thread safety and optimal performance.</li>
-                        <li>Contributed to ASIL-B safety goals by implementing low-level diagnostic mechanisms, including RAM/ROM tests, and ensuring 95%+ unit test coverage in accordance with ISO 26262.</li>
+                        <li>Developed Adaptive AUTOSAR middleware applications in C++(11/14/17).</li>
+                        <li>Developed multithreaded C++ applications using POSIX threading concepts ensuring thread safety.</li>
+                        <li>Contributed to ASIL-B safety goals by implementing low-level diagnostic mechanisms.</li>
                         <li>Developed middleware in an ASPICE Level 3 environment, maintaining bidirectional traceability.</li>
                     </ul>
                 </div>
@@ -371,7 +393,9 @@
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="UDS_DIAG_REQ" data-mod="EXP_THREAD_03" data-sec="VERIFIED">
             <i class="fas fa-heartbeat slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-route"></i> Execution Route</span>
+                </h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
@@ -383,7 +407,7 @@
                     <ul class="exp-bullets">
                         <li>Implemented UDS diagnostic services within the Diagnostics stack, managing request/response handling.</li>
                         <li>Configured COM stack development in the BSW layer based on architectural ECU extracts.</li>
-                        <li>Authored DBC files for enhanced signal simulation and designed interactive Graphical User Interfaces (GUI) within Vector CANoe environments.</li>
+                        <li>Authored DBC files for enhanced signal simulation and designed interactive Graphical User Interfaces.</li>
                         <li>Developed BSW components in CEI (Siemens) and configured MCAL layers using EB Tresos.</li>
                     </ul>
                 </div>
@@ -394,7 +418,9 @@
         <section class="slide" data-state="EXECUTION_ROUTINE" data-can="SOME_IP_BROADCAST" data-mod="EXP_THREAD_04" data-sec="VERIFIED">
             <i class="fas fa-broadcast-tower slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Execution Route</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-route"></i> Execution Route</span>
+                </h2>
                 <div class="glass-card anim-scale delay-1">
                     <div class="exp-header">
                         <div>
@@ -404,10 +430,10 @@
                         <div class="exp-date">SEP 2021 - SEP 2023</div>
                     </div>
                     <ul class="exp-bullets">
-                        <li>Developed SOME/IP C++ applications using COVESA library on Raspberry Pi, demonstrating Service Oriented Architecture (SOA).</li>
+                        <li>Developed SOME/IP C++ applications using COVESA library on Raspberry Pi for SOA.</li>
                         <li>Containerized applications using Docker and deployed on Kubernetes cluster.</li>
                         <li>Engineered and deployed keyfob features using the Arduino IDE and ESP32 UWB module.</li>
-                        <li>Orchestrated ASWC development within dSPACE SystemDesk, defining port interfaces per Classic AUTOSAR standards.</li>
+                        <li>Orchestrated ASWC development within dSPACE SystemDesk for Classic AUTOSAR.</li>
                     </ul>
                 </div>
             </div>
@@ -417,7 +443,9 @@
         <section class="slide" data-state="DATA_ARCHIVE" data-can="STANDBY" data-mod="ACADEMIC_RECORD" data-sec="CLEARED">
             <i class="fas fa-university slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-university"></i> Academic Record</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-university"></i> Academic Record</span>
+                </h2>
                 <div class="glass-card credential-box anim-scale delay-1">
                     <i class="fas fa-graduation-cap"></i>
                     <h3>B.Tech - Electronics and Communication Engineering</h3>
@@ -431,7 +459,9 @@
         <section class="slide" data-state="SEC_CLEARANCE" data-can="CLOUD_SYNC" data-mod="CREDENTIALS" data-sec="ENCRYPTED">
             <i class="fas fa-shield-alt slide-watermark"></i>
             <div class="content-wrapper">
-                <h2 class="section-header anim-fade-right"><i class="fas fa-shield-alt"></i> Industry Certifications</h2>
+                <h2 class="section-header anim-fade-right">
+                    <span class="header-title-group"><i class="fas fa-shield-alt"></i> Industry Certifications</span>
+                </h2>
                 <div class="glass-card credential-box anim-scale delay-1">
                     <i class="fas fa-cloud"></i>
                     <h3>Cloud & AI Credentials</h3>
@@ -461,7 +491,7 @@
 
             const observerOptions = {
                 root: document.getElementById('scrollContainer'),
-                threshold: 0.3 /* Lowered threshold for better mobile detection */
+                threshold: 0.3 
             };
 
             const observer = new IntersectionObserver((entries) => {
@@ -480,7 +510,6 @@
                             setTimeout(() => { span.style.color = '#ffffff'; }, 300);
                         });
                     } else {
-                        /* Only remove in-view on desktop to prevent mobile jitter */
                         if(window.innerWidth > 768) {
                             entry.target.classList.remove('in-view');
                         }
