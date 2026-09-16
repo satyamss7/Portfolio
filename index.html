@@ -52,7 +52,7 @@
         @keyframes ping { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.5); } }
 
         /* 4. TELEMETRY & WIRE */
-        .telemetry-hud { position: fixed; top: 30px; left: 80px; z-index: 0; font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.85rem; line-height: 1.8; opacity: 0.6; pointer-events: none; transition: all 0.3s ease; }
+        .telemetry-hud { position: fixed; top: 30px; left: 80px; z-index: 20; font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.85rem; line-height: 1.8; opacity: 0.6; pointer-events: none; transition: all 0.3s ease; }
         .telemetry-hud span { color: #fff; transition: color 0.3s ease; }
         .can-bus-line { position: fixed; top: 0; left: 40px; width: 2px; height: 100vh; background: rgba(0, 240, 255, 0.2); z-index: 0; pointer-events: none; }
         .can-bus-packet { position: absolute; left: -2px; width: 6px; height: 60px; background: var(--accent); box-shadow: 0 0 20px var(--accent); border-radius: 4px; animation: transmit 2s linear infinite; }
@@ -93,7 +93,6 @@
         .section-header { font-size: 2.5rem; margin-bottom: 25px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; z-index: 10; position: relative; }
         .header-title-group { display: flex; align-items: center; gap: 15px; }
         .section-header i { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
-        
         .mobile-swipe-hint { display: none; font-family: 'Fira Code', monospace; font-size: 0.8rem; color: var(--accent); font-weight: 400; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
@@ -141,52 +140,55 @@
         .cert-tag { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
 
         /* =========================================
-           MOBILE RESPONSIVENESS (SNAP RESTORED)
+           MOBILE RESPONSIVENESS (OVERLAP FIX)
            ========================================= */
         @media (max-width: 768px) {
             .hero-layout { flex-direction: column; text-align: center; gap: 20px;}
-            .hero-title { font-size: 3rem; }
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 0.95rem; }
             .hero-contacts { justify-content: center; }
-            .section-header { font-size: 2rem; justify-content: flex-start; text-align: left; }
-            .mobile-swipe-hint { display: block; } /* Show swipe hint only on mobile */
-            .glass-card { padding: 25px; }
+            .section-header { font-size: 1.6rem; justify-content: flex-start; text-align: left; }
+            .mobile-swipe-hint { display: block; } 
+            .glass-card { padding: 20px; }
             
-            /* RESTORE SNAP SCROLLING FOR MOBILE */
+            /* PUSH CONTENT DOWN ON MOBILE SO IT DOESN'T OVERLAP HUD TELEMETRY */
             .scroll-container { scroll-snap-type: y mandatory; overflow-y: scroll; overflow-x: hidden; }
             .slide { 
                 height: 100vh; height: 100dvh; min-height: 100dvh; 
-                padding: 80px 5% 40px 5%; /* Top breathing room for HUD */
+                padding: 110px 5% 40px 5%; /* Increased top padding to clear HUD */
                 scroll-snap-align: start; 
                 overflow: hidden; 
-                justify-content: flex-start; /* Push content to top so it aligns nice */
+                justify-content: flex-start; 
             }
             .content-wrapper { 
-                max-height: 85vh; /* Internal scroll in case a card has too much text */
+                max-height: 75vh; /* Safe viewing window inside screen height */
                 overflow-y: auto; 
                 padding-right: 5px; 
             }
             .content-wrapper::-webkit-scrollbar { display: none; }
             
-            /* CONVERT SKILLS GRID TO HORIZONTAL SWIPE CAROUSEL */
+            /* HORIZONTAL SWIPE CAROUSEL FOR SKILLS */
             .skills-grid { 
                 display: flex; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
-                scroll-snap-type: x mandatory; padding: 5px 0 20px 0; gap: 15px;
+                scroll-snap-type: x mandatory; padding: 5px 0 15px 0; gap: 15px;
                 -webkit-overflow-scrolling: touch; 
             }
             .skill-flip-container { 
-                flex: 0 0 85vw; /* Takes up 85% of screen width, hinting at the next card */
+                flex: 0 0 85vw; 
                 scroll-snap-align: center; 
-                height: 340px; 
+                height: 310px; 
             }
+            .massive-icon { font-size: 4rem; margin-bottom: 15px; }
+            .skill-front h3 { font-size: 1.3rem; }
             
             .exp-header { flex-direction: column; align-items: flex-start; }
             
-            /* Hide heavy graphics on mobile */
+            /* Hide heavy background graphics on mobile */
             .dashboard-gauges, .hex-grille { display: none; }
-            .radar-scanner { width: 200px; height: 200px; top: -50px; right: -50px; opacity: 0.15; }
+            .radar-scanner { width: 150px; height: 150px; top: -30px; right: -30px; opacity: 0.15; }
             .can-bus-line { display: none; }
-            .telemetry-hud { left: 20px; }
-            .slide-watermark { font-size: 40vh; right: -15%; opacity: 0.04; }
+            .telemetry-hud { left: 20px; font-size: 0.75rem; top: 15px; }
+            .slide-watermark { font-size: 30vh; right: -15%; opacity: 0.04; }
         }
     </style>
 </head>
@@ -218,9 +220,9 @@
                     <h1 class="hero-title anim-fade-up delay-2">SATYAM SAHA</h1>
                     <p class="hero-subtitle anim-fade-up delay-3">>> Senior Developer | Embedded C++ & AUTOSAR</p>
                     <div class="hero-contacts anim-fade-up delay-4">
-                        <a href="mailto:satyamsaha07@gmail.com" class="contact-btn"><i class="fas fa-envelope"></i> satyamsaha07@gmail.com</a>
-                        <a href="tel:+918409244192" class="contact-btn"><i class="fas fa-phone"></i> +91 8409244192</a>
-                        <a href="https://maps.google.com/?q=Pune,India" target="_blank" class="contact-btn"><i class="fas fa-map-marker-alt"></i> Pune, India</a>
+                        <a href="mailto:satyamsaha07@gmail.com" class="contact-btn"><i class="fas fa-envelope"></i> Email</a>
+                        <a href="tel:+918409244192" class="contact-btn"><i class="fas fa-phone"></i> Call</a>
+                        <a href="https://maps.google.com/?q=Pune,India" target="_blank" class="contact-btn"><i class="fas fa-map-marker-alt"></i> Pune</a>
                     </div>
                 </div>
             </div>
@@ -240,7 +242,7 @@
             </div>
         </section>
 
-        <!-- Slide 3: Technical Arsenal (SWIPE CAROUSEL ON MOBILE) -->
+        <!-- Slide 3: Technical Arsenal -->
         <section class="slide" data-state="LOADING_DRIVERS" data-can="HIGH_SPEED_CAN" data-mod="CORE_MODULES" data-sec="ASIL_D">
             <i class="fas fa-microchip slide-watermark"></i>
             <div class="content-wrapper">
@@ -448,7 +450,7 @@
                 </h2>
                 <div class="glass-card credential-box anim-scale delay-1">
                     <i class="fas fa-graduation-cap"></i>
-                    <h3>B.Tech - Electronics and Communication Engineering</h3>
+                    <h3>B.Tech - ECE</h3>
                     <p style="color: var(--accent); font-family: 'Fira Code', monospace; margin-bottom: 10px; font-size: 1.1rem;">Netaji Subhash Engineering College, Kolkata</p>
                     <p style="color: var(--text-dim);">2017 - 2021 | DGPA: 8.51</p>
                 </div>
@@ -472,7 +474,7 @@
                         <span class="cert-tag">SC-900</span>
                         <span class="cert-tag">PL-900</span>
                         <span class="cert-tag">DP-900</span>
-                        <span class="cert-tag">AWS Cloud Practitioner</span>
+                        <span class="cert-tag">AWS Cloud</span>
                     </div>
                 </div>
             </div>
