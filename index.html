@@ -52,7 +52,7 @@
         @keyframes ping { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.5); } }
 
         /* 4. TELEMETRY & WIRE */
-        .telemetry-hud { position: fixed; top: 30px; left: 80px; z-index: 20; font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.85rem; line-height: 1.8; opacity: 0.6; pointer-events: none; transition: all 0.3s ease; }
+        .telemetry-hud { position: fixed; top: 20px; left: 20px; z-index: 20; font-family: 'Fira Code', monospace; color: var(--accent); font-size: 0.75rem; line-height: 1.6; opacity: 0.6; pointer-events: none; transition: all 0.3s ease; }
         .telemetry-hud span { color: #fff; transition: color 0.3s ease; }
         .can-bus-line { position: fixed; top: 0; left: 40px; width: 2px; height: 100vh; background: rgba(0, 240, 255, 0.2); z-index: 0; pointer-events: none; }
         .can-bus-packet { position: absolute; left: -2px; width: 6px; height: 60px; background: var(--accent); box-shadow: 0 0 20px var(--accent); border-radius: 4px; animation: transmit 2s linear infinite; }
@@ -143,37 +143,43 @@
         .cert-tag { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
 
         /* =========================================
-           MOBILE RESPONSIVENESS (PERFECTLY CENTRED)
+           MOBILE RESPONSIVENESS (TRUE VERTICAL CENTERING)
            ========================================= */
         @media (max-width: 768px) {
-            .hero-layout { flex-direction: column; text-align: center; gap: 12px;}
+            .hero-layout { flex-direction: column; text-align: center; align-items: center; justify-content: center; gap: 10px; }
             
-            .profile-img-container { width: 160px; height: 160px; margin-bottom: 3px; overflow: visible; }
-            .profile-img { width: 135px; height: 135px; }
+            .profile-img-container { width: 140px; height: 140px; margin-bottom: 2px; overflow: visible; }
+            .profile-img { width: 120px; height: 120px; }
             .profile-ring { top: 0px; left: 0px; right: 0px; bottom: 0px; border-width: 3px; }
 
-            .hero-title { font-size: 2.1rem; }
-            .hero-subtitle { font-size: 0.78rem; margin-bottom: 10px; }
+            .hero-title { font-size: 1.9rem; }
+            .hero-subtitle { font-size: 0.75rem; margin-bottom: 8px; }
             
             .hero-contacts { justify-content: center; gap: 6px; }
-            .contact-btn { padding: 7px 12px; font-size: 0.75rem; }
+            .contact-btn { padding: 6px 12px; font-size: 0.72rem; }
             
-            .section-header { font-size: 1.5rem; justify-content: flex-start; text-align: left; }
+            .section-header { font-size: 1.4rem; justify-content: flex-start; text-align: left; }
             .mobile-swipe-hint { display: block; } 
-            .glass-card { padding: 18px; }
+            .glass-card { padding: 15px; }
             
             .scroll-container { scroll-snap-type: y mandatory; overflow-y: scroll; overflow-x: hidden; }
             .slide { 
                 height: 100vh; height: 100dvh; min-height: 100dvh; 
-                padding: 70px 5% 20px 5%; 
+                padding: 40px 5% 20px 5%; 
                 scroll-snap-align: start; 
+                display: flex; 
+                flex-direction: column; 
+                justify-content: center !important; /* Forces exact center */
+                align-items: center !important;
                 overflow: hidden; 
-                justify-content: center; /* PERFECT VERTICAL CENTERING */
-                align-items: center;
             }
             .content-wrapper { 
-                max-height: calc(100dvh - 100px); /* Bounded safely to avoid top HUD collision */
+                max-height: 85dvh; 
                 overflow-y: auto; 
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                margin: auto; /* Absolute perfect vertical centering for flex items */
                 padding-right: 2px; 
             }
             .content-wrapper::-webkit-scrollbar { display: none; }
@@ -186,18 +192,18 @@
             .skill-flip-container { 
                 flex: 0 0 85vw; 
                 scroll-snap-align: center; 
-                height: 295px; 
+                height: 285px; 
             }
-            .massive-icon { font-size: 3.5rem; margin-bottom: 12px; }
-            .skill-front h3 { font-size: 1.2rem; }
+            .massive-icon { font-size: 3.2rem; margin-bottom: 10px; }
+            .skill-front h3 { font-size: 1.15rem; }
             
             .exp-header { flex-direction: column; align-items: flex-start; }
             
             .dashboard-gauges, .hex-grille { display: none; }
-            .radar-scanner { width: 150px; height: 150px; top: -30px; right: -30px; opacity: 0.15; }
+            .radar-scanner { width: 120px; height: 120px; top: -20px; right: -20px; opacity: 0.15; }
             .can-bus-line { display: none; }
-            .telemetry-hud { left: 20px; font-size: 0.72rem; top: 12px; }
-            .slide-watermark { font-size: 25vh; right: -15%; opacity: 0.04; }
+            .telemetry-hud { left: 15px; font-size: 0.68rem; top: 10px; }
+            .slide-watermark { font-size: 20vh; right: -10%; opacity: 0.03; }
         }
     </style>
 </head>
