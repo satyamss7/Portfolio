@@ -100,76 +100,23 @@
         /* =========================================
            3D FLIP CARDS (UNIFORM SIZE & MASSIVE ICONS)
            ========================================= */
-        .skills-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; 
-        }
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; }
+        .skill-flip-container { perspective: 1000px; height: 320px; cursor: pointer; }
+        .skill-flipper { position: relative; width: 100%; height: 100%; transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+        .skill-flip-container.flipped .skill-flipper { transform: rotateY(180deg); }
+        .skill-front, .skill-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: rgba(10, 15, 30, 0.6); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; backdrop-filter: blur(15px); padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); display: flex; flex-direction: column; }
         
-        .skill-flip-container {
-            perspective: 1000px;
-            height: 320px; /* Locked size for all cards */
-            cursor: pointer;
-        }
-
-        .skill-flipper {
-            position: relative; width: 100%; height: 100%;
-            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
-            transform-style: preserve-3d;
-        }
-
-        /* Trigger flip on click */
-        .skill-flip-container.flipped .skill-flipper {
-            transform: rotateY(180deg);
-        }
-
-        /* Shared face properties */
-        .skill-front, .skill-back {
-            position: absolute; width: 100%; height: 100%;
-            backface-visibility: hidden;
-            background: rgba(10, 15, 30, 0.6);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 12px; backdrop-filter: blur(15px);
-            padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column;
-        }
-
-        /* FRONT OF CARD (Massive Icons) */
-        .skill-front {
-            justify-content: center; align-items: center; text-align: center;
-            transition: 0.3s ease;
-        }
-        .skill-flip-container:hover .skill-front {
-            border-color: var(--accent); background: rgba(10, 15, 30, 0.8);
-            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
-        }
-        
-        .massive-icon {
-            font-size: 5rem; /* GIANT ICON */
-            color: var(--accent); margin-bottom: 25px;
-            text-shadow: 0 0 25px var(--accent-glow);
-            transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1);
-        }
+        .skill-front { justify-content: center; align-items: center; text-align: center; transition: 0.3s ease; }
+        .skill-flip-container:hover .skill-front { border-color: var(--accent); background: rgba(10, 15, 30, 0.8); box-shadow: 0 0 30px rgba(0, 240, 255, 0.15); }
+        .massive-icon { font-size: 5rem; color: var(--accent); margin-bottom: 25px; text-shadow: 0 0 25px var(--accent-glow); transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1); }
         .skill-flip-container:hover .massive-icon { transform: scale(1.15); }
-        
         .skill-front h3 { font-size: 1.6rem; color: #fff; margin-bottom: 15px; }
         .click-hint { font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--text-dim); transition: 0.3s; }
         .skill-flip-container:hover .click-hint { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
 
-        /* BACK OF CARD (Technical Details) */
-        .skill-back {
-            transform: rotateY(180deg);
-            background: rgba(8, 12, 22, 0.95);
-            border-color: var(--accent);
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
-            justify-content: flex-start;
-        }
-        
-        .skill-back h3 {
-            font-size: 1.2rem; color: var(--accent); margin-bottom: 15px;
-            border-bottom: 1px dashed rgba(0, 240, 255, 0.3); padding-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .skill-back { transform: rotateY(180deg); background: rgba(8, 12, 22, 0.95); border-color: var(--accent); box-shadow: 0 0 25px rgba(0, 240, 255, 0.2); justify-content: flex-start; }
+        .skill-back h3 { font-size: 1.2rem; color: var(--accent); margin-bottom: 15px; border-bottom: 1px dashed rgba(0, 240, 255, 0.3); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .close-hint { font-size: 0.75rem; font-family: 'Fira Code', monospace; color: var(--alert-red); }
-
         .tech-list { font-family: 'Fira Code', monospace; font-size: 0.95rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 12px; }
         .tech-list span { line-height: 1.4; }
         .tech-list span::before { content: '>'; color: var(--accent); margin-right: 10px; font-weight: bold; }
@@ -188,15 +135,32 @@
         .cert-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 25px; }
         .cert-tag { background: rgba(0, 240, 255, 0.15); border: 1px solid var(--accent); padding: 8px 16px; border-radius: 6px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); font-weight: bold; }
 
+        /* =========================================
+           MOBILE RESPONSIVENESS FIX
+           ========================================= */
         @media (max-width: 768px) {
             .hero-layout { flex-direction: column; text-align: center; gap: 20px;}
             .hero-title { font-size: 3rem; }
             .hero-contacts { justify-content: center; }
             .section-header { font-size: 2rem; justify-content: center; text-align: center; }
             .glass-card { padding: 25px; }
+            
+            /* Remove fixed grid columns for mobile */
             .skills-grid { grid-template-columns: 1fr; }
-            .skill-flip-container { height: 350px; } /* Slightly taller on mobile for wrapping text */
+            .skill-flip-container { height: 350px; } 
+            
+            /* DISABLE SCROLL SNAP & FIXED HEIGHT ON MOBILE SO TALL CONTENT DOESN'T GET CUT */
+            .scroll-container { scroll-snap-type: none; overflow-x: hidden; }
+            .slide { 
+                height: auto; min-height: 100vh; overflow: visible; 
+                padding: 100px 5% 60px 5%; /* Adds breathing room top and bottom */
+                scroll-snap-align: none; 
+            }
+            .content-wrapper { overflow: visible; max-height: none; }
+            
             .exp-header { flex-direction: column; align-items: flex-start; }
+            
+            /* Hide non-essential background graphics on mobile for performance */
             .dashboard-gauges, .hex-grille { display: none; }
             .radar-scanner { width: 200px; height: 200px; top: -50px; right: -50px; opacity: 0.15; }
             .can-bus-line { display: none; }
@@ -268,7 +232,7 @@
                             <div class="skill-front">
                                 <i class="fas fa-code massive-icon"></i>
                                 <h3>Core Engineering</h3>
-                                <div class="click-hint">[ CLICK TO DECRYPT ]</div>
+                                <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
                             <!-- BACK -->
                             <div class="skill-back">
@@ -291,7 +255,7 @@
                             <div class="skill-front">
                                 <i class="fas fa-car-side massive-icon"></i>
                                 <h3>Automotive OS</h3>
-                                <div class="click-hint">[ CLICK TO DECRYPT ]</div>
+                                <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
                             <!-- BACK -->
                             <div class="skill-back">
@@ -314,7 +278,7 @@
                             <div class="skill-front">
                                 <i class="fas fa-network-wired massive-icon"></i>
                                 <h3>Protocols & IPC</h3>
-                                <div class="click-hint">[ CLICK TO DECRYPT ]</div>
+                                <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
                             <!-- BACK -->
                             <div class="skill-back">
@@ -337,7 +301,7 @@
                             <div class="skill-front">
                                 <i class="fas fa-laptop-code massive-icon"></i>
                                 <h3>Tools & Debugging</h3>
-                                <div class="click-hint">[ CLICK TO DECRYPT ]</div>
+                                <div class="click-hint">[ TAP TO DECRYPT ]</div>
                             </div>
                             <!-- BACK -->
                             <div class="skill-back">
@@ -497,7 +461,7 @@
 
             const observerOptions = {
                 root: document.getElementById('scrollContainer'),
-                threshold: 0.5 
+                threshold: 0.3 /* Lowered threshold for better mobile detection */
             };
 
             const observer = new IntersectionObserver((entries) => {
@@ -516,7 +480,10 @@
                             setTimeout(() => { span.style.color = '#ffffff'; }, 300);
                         });
                     } else {
-                        entry.target.classList.remove('in-view');
+                        /* Only remove in-view on desktop to prevent mobile jitter */
+                        if(window.innerWidth > 768) {
+                            entry.target.classList.remove('in-view');
+                        }
                     }
                 });
             }, observerOptions);
