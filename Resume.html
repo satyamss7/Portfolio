@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satyam Saha | Automotive Software Portfolio</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #020610;
+            --bg-card: rgba(8, 12, 22, 0.75);
+            --text-main: #ffffff;
+            --text-dim: #94a3b8;
+            --accent: #00f0ff;
+            --accent-dim: rgba(0, 240, 255, 0.2);
+            --gradient: linear-gradient(135deg, #00f0ff, #0055ff);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scrollbar-width: none; }
+        *::-webkit-scrollbar { display: none; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden; 
+        }
+
+        /* --- 3D ADAS DRIVING GRID (Autonomous Mapping) --- */
+        .adas-grid-container {
+            position: fixed; bottom: 0; left: 0; width: 100vw; height: 60vh;
+            perspective: 800px; z-index: -3; overflow: hidden;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 100%);
+        }
+        .adas-grid {
+            position: absolute; bottom: -50%; left: -50%; width: 200%; height: 200%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.3) 1px, transparent 1px);
+            background-size: 80px 80px;
+            transform: rotateX(75deg);
+            animation: drive 1.5s linear infinite;
+        }
+        @keyframes drive {
+            0% { transform: rotateX(75deg) translateY(0); }
+            100% { transform: rotateX(75deg) translateY(80px); }
+        }
+
+        /* --- LiDAR / RADAR SCANNER --- */
+        .radar-scanner {
+            position: fixed; top: -100px; right: -100px;
+            width: 500px; height: 500px; border-radius: 50%;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            background: radial-gradient(circle, rgba(0,240,255,0.05) 0%, transparent 70%);
+            z-index: -2; pointer-events: none;
+        }
+        .radar-scanner::before {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 250px; height: 250px;
+            background: conic-gradient(from 0deg at 0 0, transparent 270deg, rgba(0,240,255,0.4) 360deg);
+            transform-origin: 0 0; animation: radar-spin 4s linear infinite;
+            border-right: 2px solid var(--accent);
+        }
+        @keyframes radar-spin { 100% { transform: rotate(360deg); } }
+        .radar-ring {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            border-radius: 50%; border: 1px dashed rgba(0, 240, 255, 0.2);
+        }
+        .ring-1 { width: 200px; height: 200px; }
+        .ring-2 { width: 350px; height: 350px; border: 1px solid rgba(0, 240, 255, 0.1); }
+
+        /* --- ECU Nodes (CAN Network) --- */
+        .ecu-node {
+            position: fixed; width: 8px; height: 8px; background: var(--accent);
+            border-radius: 50%; box-shadow: 0 0 15px var(--accent); z-index: -2; opacity: 0.5;
+        }
+        .ecu-node::after {
+            content: attr(data-label); position: absolute; top: 15px; left: -10px;
+            font-family: 'Fira Code', monospace; font-size: 0.7rem; color: var(--accent); opacity: 0.7;
+        }
+        .ecu-1 { top: 25%; left: 15%; animation: pulse 2s infinite; }
+        .ecu-2 { top: 60%; left: 10%; animation: pulse 2s infinite 0.5s; }
+        .ecu-3 { top: 35%; right: 25%; animation: pulse 2s infinite 1.5s; }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.5); } }
+
+        /* General UI Styling */
+        .scroll-container {
+            height: 100vh; height: 100dvh; overflow-y: scroll;
+            scroll-snap-type: y mandatory; scroll-behavior: smooth;
+        }
+        .slide {
+            height: 100vh; height: 100dvh; width: 100%; scroll-snap-align: start;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 5%; position: relative;
+        }
+        .content-wrapper { max-width: 1000px; width: 100%; z-index: 10; }
+
+        /* Animations */
+        .anim-fade-up { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .anim-fade-right { opacity: 0; transform: translateX(-50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .anim-scale { opacity: 0; transform: scale(0.9); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        
+        .slide.in-view .anim-fade-up { opacity: 1; transform: translateY(0); }
+        .slide.in-view .anim-fade-right { opacity: 1; transform: translateX(0); }
+        .slide.in-view .anim-scale { opacity: 1; transform: scale(1); }
+        .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; } .delay-4 { transition-delay: 0.4s; }
+
+        /* Hero */
+        .hero-layout { display: flex; align-items: center; gap: 50px; }
+        .profile-img-container { position: relative; }
+        .profile-img {
+            width: 230px; height: 230px; border-radius: 50%;
+            object-fit: cover; border: 3px solid var(--accent);
+            box-shadow: 0 0 35px var(--accent-dim); z-index: 2; position: relative;
+        }
+        .profile-ring {
+            position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px;
+            border-radius: 50%; border: 3px solid rgba(0, 240, 255, 0.1);
+            border-top-color: var(--accent); border-bottom-color: var(--accent);
+            animation: rotate 8s linear infinite; z-index: 1;
+        }
+        .hero-title {
+            font-size: 4.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px;
+            background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-subtitle {
+            font-family: 'Fira Code', monospace; font-size: 1.15rem; color: var(--accent);
+            margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .hero-contacts { display: flex; gap: 15px; flex-wrap: wrap; }
+        .contact-btn {
+            padding: 12px 24px; border: 1px solid var(--accent-dim); border-radius: 30px;
+            color: var(--text-main); text-decoration: none; display: flex; align-items: center;
+            gap: 10px; background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(10px);
+            transition: 0.3s ease; font-size: 0.95rem;
+        }
+        .contact-btn:hover {
+            background: var(--accent-dim); border-color: var(--accent);
+            box-shadow: 0 0 20px var(--accent-dim); transform: translateY(-3px);
+        }
+        .scroll-indicator {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            animation: bounce 2s infinite; color: var(--accent); font-size: 1.5rem; opacity: 0.7;
+        }
+
+        /* Sections & Cards */
+        .section-header {
+            font-size: 2.2rem; margin-bottom: 25px; font-weight: 800;
+            display: flex; align-items: center; gap: 15px; text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        .section-header i { color: var(--accent); }
+        .glass-card {
+            background: var(--bg-card); padding: 40px; border-radius: 20px;
+            border: 1px solid rgba(0, 240, 255, 0.2); backdrop-filter: blur(15px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+        
+        /* Summary & Skills */
+        .summary-text { font-size: 1.25rem; line-height: 1.8; color: var(--text-dim); }
+        .highlight { color: var(--text-main); font-weight: 600; text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+        
+        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .skill-box {
+            background: rgba(8, 12, 22, 0.6); border: 1px solid rgba(255,255,255,0.05); padding: 25px;
+            border-radius: 15px; transition: 0.3s ease; backdrop-filter: blur(10px);
+        }
+        .skill-box:hover { border-color: var(--accent); transform: scale(1.05); box-shadow: 0 0 25px var(--accent-dim); }
+        .skill-icon { font-size: 2rem; color: var(--accent); margin-bottom: 15px; }
+        .skill-box h3 { font-size: 1.1rem; margin-bottom: 15px; }
+        .tech-list { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--text-dim); display: flex; flex-direction: column; gap: 8px;}
+
+        /* Experience Detail Cards */
+        .exp-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; border-bottom: 1px solid rgba(0, 240, 255, 0.2); padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
+        .exp-title { font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+        .exp-company { font-size: 1.1rem; color: var(--accent); font-family: 'Fira Code', monospace; }
+        .exp-date { font-size: 1rem; color: var(--text-dim); background: rgba(0, 240, 255, 0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid var(--accent-dim); }
+        .exp-bullets { list-style: none; margin-top: 20px; }
+        .exp-bullets li {
+            position: relative; padding-left: 25px; margin-bottom: 15px;
+            font-size: 1.05rem; line-height: 1.6; color: var(--text-dim);
+        }
+        .exp-bullets li::before {
+            content: '▹'; position: absolute; left: 0; top: 0;
+            color: var(--accent); font-size: 1.2rem;
+        }
+
+        /* Edu & Cert Cards */
+        .credential-box { text-align: center; }
+        .credential-box i { font-size: 3rem; color: var(--accent); margin-bottom: 20px; }
+        .credential-box h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .credential-box p { font-size: 1.1rem; color: var(--text-dim); line-height: 1.6; }
+        .cert-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .cert-tag { background: rgba(0,240,255,0.1); border: 1px solid var(--accent-dim); padding: 8px 15px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 0.9rem; color: var(--accent); }
+
+        @media (max-width: 768px) {
+            .hero-layout { flex-direction: column; text-align: center; gap: 20px;}
+            .hero-title { font-size: 3rem; }
+            .hero-contacts { justify-content: center; }
+            .section-header { font-size: 1.8rem; justify-content: center; }
+            .glass-card { padding: 25px; }
+            .exp-header { flex-direction: column; align-items: flex-start; }
+            .radar-scanner { width: 300px; height: 300px; top: -50px; right: -50px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Elements -->
+    <div class="adas-grid-container"><div class="adas-grid"></div></div>
+    <div class="radar-scanner"><div class="radar-ring ring-1"></div><div class="radar-ring ring-2"></div></div>
+    <div class="ecu-node ecu-1" data-label="ADAS_ECU"></div>
+    <div class="ecu-node ecu-2" data-label="BCM_NODE"></div>
+    <div class="ecu-node ecu-3" data-label="TELEMATICS"></div>
+
+    <div class="scroll-container" id="scrollContainer">
+        
+        <!-- Slide 1: Hero -->
+        <section class="slide">
+            <div class="content-wrapper hero-layout">
+                <div class="profile-img-container anim-scale delay-1">
+                    <img src="WhatsApp Image 2026-09-16 at 22.13.34.jpeg" alt="Satyam Saha" class="profile-img">
+                    <div class="profile-ring"></div>
+                </div>
+                <div>
+                    <h1 class="hero-title anim-fade-up delay-2">SATYAM SAHA</h1>
+                    <p class="hero-subtitle anim-fade-up delay-3">>> Senior Developer | Embedded C++ & AUTOSAR</p>
+                    <div class="hero-contacts anim-fade-up delay-4">
+                        <a href="mailto:satyamsaha07@gmail.com" class="contact-btn"><i class="fas fa-envelope"></i> satyamsaha07@gmail.com</a>
+                        <a href="tel:+918409244192" class="contact-btn"><i class="fas fa-phone"></i> +91 8409244192</a>
+                        <a href="https://maps.google.com/?q=Pune,India" target="_blank" class="contact-btn"><i class="fas fa-map-marker-alt"></i> Pune, India</a>
+                    </div>
+                </div>
+            </div>
+            <i class="fas fa-chevron-down scroll-indicator"></i>
+        </section>
+
+        <!-- Slide 2: Summary -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-cogs"></i> System Architecture</h2>
+                <div class="glass-card summary-text anim-scale delay-1">
+                    Senior Software Developer with 5+ years of experience in <span class="highlight">AUTOSAR Adaptive and Classic</span>, <span class="highlight">Embedded C/C++ BSW</span>, MCAL, and automotive middleware<span style="display:none">[cite: 1]</span>. Strong expertise in CAN, UDS diagnostics, COM stack, POSIX-based multithreaded systems, and Linux platforms. Hands-on experience with EB Tresos, CANoe, DaVinci, and Docker/Kubernetes in modern vehicle software development<span style="display:none">[cite: 1]</span>.
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: Technical Arsenal -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-microchip"></i> Core Modules</h2>
+                <div class="skills-grid">
+                    <div class="skill-box anim-fade-up delay-1">
+                        <i class="fas fa-code skill-icon"></i>
+                        <h3>Languages</h3>
+                        <div class="tech-list">
+                            <span>> Embedded C</span>
+                            <span>> C++ (11/14/17)</span>
+                            <span>> CAPL</span>
+                        </div>
+                    </div>
+                    <div class="skill-box anim-fade-up delay-2">
+                        <i class="fas fa-car skill-icon"></i>
+                        <h3>Automotive</h3>
+                        <div class="tech-list">
+                            <span>> Classic & Adaptive AUTOSAR</span>
+                            <span>> BSW & MCAL</span>
+                            <span>> COM Stack & UDS</span>
+                        </div>
+                    </div>
+                    <div class="skill-box anim-fade-up delay-3">
+                        <i class="fas fa-network-wired skill-icon"></i>
+                        <h3>Protocols</h3>
+                        <div class="tech-list">
+                            <span>> CAN & SOME/IP</span>
+                            <span>> DDS & UWB</span>
+                            <span>> MQTT</span>
+                        </div>
+                    </div>
+                    <div class="skill-box anim-fade-up delay-4">
+                        <i class="fas fa-laptop-code skill-icon"></i>
+                        <h3>Tools & DevOps</h3>
+                        <div class="tech-list">
+                            <span>> Vector CANoe / EB Tresos</span>
+                            <span>> Docker / K8s (K3s)</span>
+                            <span>> GitLab CI/CD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: Experience 1 - TCS -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <div class="glass-card anim-scale delay-1">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-title">Information Technology Analyst</div>
+                            <div class="exp-company">Tata Consultancy Services (TCS) | Pune</div>
+                        </div>
+                        <div class="exp-date">August 2026 - Present</div>
+                    </div>
+                    <ul class="exp-bullets">
+                        <li>Engaged in designing and building the Data Collector module codebase for a leading automotive client<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Contributing to the architecture and implementation of SOVD-compliant systems<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Developing ASPICE-compliant automotive C++ applications to meet strict industry standards<span style="display:none">[cite: 1]</span>.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: Experience 2 - KPIT -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <div class="glass-card anim-scale delay-1">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-title">Senior Software Engineer</div>
+                            <div class="exp-company">KPIT Technologies | Pune</div>
+                        </div>
+                        <div class="exp-date">May 2024 - July 2026</div>
+                    </div>
+                    <ul class="exp-bullets">
+                        <li>Formulated UML diagrams for high-level system and class architectural designs<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Developed and integrated Adaptive AUTOSAR middleware applications and services in C++(11/14/17)<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Developed multithreaded C++ applications using POSIX threading concepts, ensuring thread safety and optimal performance<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Contributed to ASIL-B safety goals by implementing low-level diagnostic mechanisms, including RAM/ROM tests, and ensuring 95%+ unit test coverage in accordance with ISO 26262<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Developed middleware in an ASPICE Level 3 environment, maintaining bidirectional traceability and compliance with MISRA C++ guidelines<span style="display:none">[cite: 1]</span>.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: Experience 3 - Cognizant (Associate) -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <div class="glass-card anim-scale delay-1">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-title">Associate</div>
+                            <div class="exp-company">Cognizant | Pune</div>
+                        </div>
+                        <div class="exp-date">Oct 2023 - May 2024</div>
+                    </div>
+                    <ul class="exp-bullets">
+                        <li>Implemented UDS diagnostic services within the Diagnostics stack, managing request/response handling<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Configured COM stack development in the BSW layer based on architectural ECU extracts<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Authored DBC files for enhanced signal simulation and designed interactive Graphical User Interfaces (GUI) within Vector CANoe environments<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Developed BSW components in CEI (Siemens) and configured MCAL layers using EB Tresos<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Validated Digital Output, PWM, and Flex Frequency functionalities via hardware bench testing<span style="display:none">[cite: 1]</span>.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: Experience 4 - Cognizant (Programmer Analyst) -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-route"></i> Professional Execution</h2>
+                <div class="glass-card anim-scale delay-1">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-title">Programmer Analyst</div>
+                            <div class="exp-company">Cognizant | Pune</div>
+                        </div>
+                        <div class="exp-date">Sep 2021 - Sep 2023</div>
+                    </div>
+                    <ul class="exp-bullets">
+                        <li>Developed SOME/IP C++ applications using COVESA library on Raspberry Pi, demonstrating Service Oriented Architecture (SOA) using notifier and subscriber models<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Containerized applications using Docker and deployed on Kubernetes cluster<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Engineered and deployed keyfob features using the Arduino IDE and ESP32 UWB module<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Orchestrated ASWC development within dSPACE SystemDesk, defining port interfaces per Classic AUTOSAR standards<span style="display:none">[cite: 1]</span>.</li>
+                        <li>Facilitated test automation through the implementation of CAPL scripting and engineered simulation panels in Vector CANoe<span style="display:none">[cite: 1]</span>.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: Education -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-graduation-cap"></i> Academic Background</h2>
+                <div class="glass-card credential-box anim-scale delay-1">
+                    <i class="fas fa-university"></i>
+                    <h3>B.Tech - Electronics and Communication Engineering</h3>
+                    <p style="color: var(--accent); font-family: 'Fira Code', monospace; margin-bottom: 5px;">Netaji Subhash Engineering College, Kolkata</p>
+                    <p>2017 - 2021 | DGPA: 8.51<span style="display:none">[cite: 1]</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: Certifications -->
+        <section class="slide">
+            <div class="content-wrapper">
+                <h2 class="section-header anim-fade-right"><i class="fas fa-shield-alt"></i> Industry Certifications</h2>
+                <div class="glass-card credential-box anim-scale delay-1">
+                    <i class="fas fa-cloud"></i>
+                    <h3>Cloud & AI Credentials</h3>
+                    <p>Officially certified across Microsoft Azure and AWS ecosystems.<span style="display:none">[cite: 1]</span></p>
+                    <div class="cert-tags">
+                        <span class="cert-tag">AZ-900</span>
+                        <span class="cert-tag">AI-900</span>
+                        <span class="cert-tag">SC-900</span>
+                        <span class="cert-tag">PL-900</span>
+                        <span class="cert-tag">DP-900</span>
+                        <span class="cert-tag">AWS Cloud Practitioner</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const observerOptions = {
+                root: document.getElementById('scrollContainer'),
+                threshold: 0.4 
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    } else {
+                        entry.target.classList.remove('in-view');
+                    }
+                });
+            }, observerOptions);
+
+            slides.forEach(slide => {
+                observer.observe(slide);
+            });
+        });
+    </script>
+</body>
+</html>
